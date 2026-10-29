@@ -1,0 +1,256 @@
+:root {
+  --text: #f3f4f6;
+  --dim: rgba(243, 244, 246, 0.6);
+  --bg: rgb(76, 78, 88);
+  --field: rgba(255, 255, 255, 0.1);
+  --stroke: rgba(255, 255, 255, 0.16);
+  --accent: #2f6bff;
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI Variable Text", "Segoe UI", "Yu Gothic UI", sans-serif;
+  font-size: 14px;
+}
+button {
+  font: inherit;
+  color: inherit;
+  border: 0;
+  background: var(--field);
+  border-radius: 10px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+button:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+button.primary {
+  background: var(--accent);
+  color: #fff;
+}
+button.ghost {
+  background: none;
+}
+button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+input,
+select,
+textarea {
+  font: inherit;
+  color: var(--text);
+  background: var(--field);
+  border: 1px solid var(--stroke);
+  border-radius: 10px;
+  padding: 6px 10px;
+  outline: none;
+  min-width: 0;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--dim);
+}
+select option {
+  color: #111;
+}
+.wrap {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 16px 12px;
+  gap: 10px;
+}
+.tabs {
+  display: flex;
+  gap: 6px;
+  flex: none;
+  flex-wrap: wrap;
+}
+.tab {
+  border-radius: 999px;
+  padding: 6px 14px;
+  background: none;
+  color: var(--dim);
+}
+.tab.on {
+  background: var(--field);
+  color: var(--text);
+}
+.view {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: auto;
+}
+.dim {
+  color: var(--dim);
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.grow {
+  flex: 1;
+}
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+.big {
+  font-size: 44px;
+  font-weight: 300;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  padding: 10px 0;
+}
+.sw {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  padding: 18px 0 10px;
+  color: var(--text);
+  font-weight: 300;
+  line-height: 1;
+}
+.sw span {
+  display: inline-block;
+  text-align: center;
+  font-size: 54px;
+  width: 0.58em;
+}
+.sw span.s {
+  width: 0.3em;
+}
+.sw span.ms {
+  font-size: 34px;
+  width: 0.58em;
+  color: var(--dim);
+}
+.sw span.ms.s {
+  width: 0.3em;
+}
+.sw span.dot {
+  font-size: 34px;
+  width: 0.3em;
+  color: var(--dim);
+}
+.dur {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.dur input {
+  width: 58px;
+  text-align: center;
+}
+.dur label {
+  color: var(--dim);
+  font-size: 12px;
+  margin-right: 6px;
+}
+.card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--field);
+}
+.card .lb {
+  flex: 1;
+  min-width: 0;
+}
+.card .tm {
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 300;
+}
+.card.fin .tm {
+  font-weight: 600;
+}
+.zone .city {
+  font-weight: 600;
+}
+.zone .sub {
+  font-size: 12px;
+  color: var(--dim);
+}
+.btns {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.lap {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 10px;
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+.bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 110px;
+  padding: 6px 4px;
+}
+.bar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  height: 100%;
+  font-size: 11px;
+  color: var(--dim);
+}
+.bar i {
+  display: block;
+  width: 100%;
+  border-radius: 6px 6px 2px 2px;
+  background: var(--accent);
+  min-height: 2px;
+}
+.bar.today i {
+  background: var(--text);
+}
+h4 {
+  margin: 8px 0 2px;
+  font-size: 12.5px;
+  color: var(--dim);
+  font-weight: 600;
+}
+.cfg {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  font-size: 12px;
+  color: var(--dim);
+}
+.cfg input {
+  width: 100%;
+}
+.x {
+  padding: 2px 8px;
+  background: none;
+  color: var(--dim);
+}

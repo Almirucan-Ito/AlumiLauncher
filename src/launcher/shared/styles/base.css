@@ -1,0 +1,103 @@
+/* ウィンドウ本体(背景の透過・ヘッダーの有無) */
+/* ---------- ウィンドウ本体 ---------- */
+.app {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 10px;
+  isolation: isolate;
+}
+/* 背景だけを透過させる(文字やアイコンは透けない) */
+.app::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--bg);
+  opacity: var(--bg-opacity, 0.78);
+  pointer-events: none;
+}
+
+.titlebar {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 40px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
+  padding: 0 12px;
+  z-index: 5;
+}
+.titlebar button {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  opacity: 0.55;
+  transition:
+    opacity 0.15s,
+    background 0.15s;
+}
+.titlebar button:hover {
+  opacity: 1;
+  background: var(--glass-strong);
+}
+.titlebar button.close:hover {
+  background: #e5484d;
+  color: #fff;
+}
+
+.clock {
+  text-align: center;
+}
+.time {
+  font-size: clamp(38px, 11vmin, 150px);
+  font-weight: 300;
+  letter-spacing: 1px;
+  line-height: 1;
+}
+.date {
+  margin-top: clamp(6px, 1.2vmin, 16px);
+  font-size: clamp(12px, 2.6vmin, 30px);
+  color: var(--text-dim);
+}
+
+/*
+ * 画面は、上から順に、次の 5 つの段に分かれる。
+ *   トップ(.band-top)   … プリセットと、ウィンドウのボタン(.titlebar)が並ぶ帯
+ *   ヘッダー(.wbar-header) … ウィジェットを並べる。ウィジェットの高さに合わせて、高さが決まる(無ければ出ない)
+ *   ホーム(.home)        … アイコン・フォルダ。ページ送りができる
+ *   フッター(.wbar-footer) … ウィジェットを並べる。ヘッダーと同じ
+ *   ボトム(.band-bottom) … ＋・再読み込み・設定のボタン(.corner)が並ぶ帯
+ * トップ・ボトムのボタンは、位置を決めて重ねて置き、この帯が、その分の高さを空ける。
+ */
+.app {
+  --top-h: 40px;
+  --bottom-h: 50px;
+  /* ヘッダー・ホーム・フッターの左右の余白(そろえる) */
+  --side-x: clamp(14px, 4vw, 30px);
+}
+.band {
+  flex: 0 0 auto;
+  pointer-events: none;
+}
+.band-top {
+  height: var(--top-h);
+}
+.band-bottom {
+  height: var(--bottom-h);
+}
+.app.compact .band {
+  display: none;
+}
+.home {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  /* 下の余白は、ページの点(●●●)を置く場所 */
+  padding: 12px var(--side-x) 32px;
+}

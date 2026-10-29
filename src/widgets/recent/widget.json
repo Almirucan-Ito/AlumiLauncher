@@ -1,0 +1,9 @@
+{
+  "builtin": "recent",
+  "icon": "icon.svg",
+  "name": "最近開いた",
+  "name_en": "Recent",
+  "description": "直近に起動したもの 5 個",
+  "description_en": "The 5 items you launched last",
+  "cells": [3, 7, 5]
+}

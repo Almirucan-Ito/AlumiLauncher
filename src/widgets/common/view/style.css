@@ -1,0 +1,64 @@
+/* common ウィジェットの見た目(本体の styles.css の後に読み込まれる) */
+.wicons {
+  display: flex;
+  gap: 6px;
+  min-height: 36px;
+  align-items: center;
+}
+
+.wicon {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  transition: transform 0.15s var(--ease);
+}
+
+.wicon:hover {
+  transform: scale(1.12);
+}
+
+.wicon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.wicon .ghost {
+  width: 70%;
+  height: 70%;
+  border-radius: 8px;
+  background: var(--glass);
+}
+
+.wicons {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.wicons {
+  gap: 10px;
+}
+
+/* 高さに合わせた中身(1 マス = アイコンだけ / 2 マス以上 = 題名とアイコン) */
+.wusage {
+  justify-content: center;
+}
+@container (max-height: 64px) {
+  .wusage {
+    padding: 4px 10px;
+  }
+  .wusage .wcard-title {
+    display: none;
+  }
+  .wusage .wicons {
+    min-height: 0;
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+  .wusage .wicon {
+    width: min(36px, calc(100cqh - 8px));
+    height: min(36px, calc(100cqh - 8px));
+  }
+}

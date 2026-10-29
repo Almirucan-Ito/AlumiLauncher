@@ -1,0 +1,6 @@
+{
+  "name": "ハロー",
+  "description": "ミニアプリのサンプル(ウィジェットつき)",
+  "entry": "view/index.html",
+  "permissions": ["storage"]
+}

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>メモ</title>
+<link rel="stylesheet" href="style.css"></head><body>
+<div class="wrap">
+  <div class="tabs"><button class="tab on" data-t="pad" id="tabPad"></button><button class="tab" data-t="board" id="tabBoard"></button></div>
+
+  <div class="view" id="v-pad" style="overflow:hidden">
+    <div class="pad">
+      <div class="side"><button id="newBtn" class="primary"></button><div class="files" id="files"></div></div>
+      <div class="ed">
+        <input id="title" maxlength="80">
+        <textarea id="body" spellcheck="false"></textarea>
+        <div class="bar"><span class="cnt" id="cnt"></span><span class="sp"></span><button id="saveBtn" class="primary"></button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="view" id="v-board" style="display:none">
+    <div class="row"><button id="addNote" class="primary"></button><span class="dim" id="boardHint"></span></div>
+    <div class="board" id="board"></div>
+  </div>
+</div>
+<script src="../controller/main.js"></script></body></html>

@@ -1,0 +1,18 @@
+/* スタイルの入口。読み込む順番が、そのまま、規則の優先の順番になる(順番を変えると、見た目が変わる)。 */
+@import "./theme.css";
+@import "./base.css";
+@import "./pager.css";
+@import "./tiles.css";
+@import "./folders.css";
+@import "./controls.css";
+@import "./settings.css";
+@import "./dialogs.css";
+@import "./menus.css";
+@import "./compact.css";
+@import "./ui-colors.css";
+@import "./widgets.css";
+@import "./widget-contents.css";
+@import "./miniapps.css";
+@import "./widget-layers.css";
+@import "./desktop-mode.css";
+@import "./start-apps.css";

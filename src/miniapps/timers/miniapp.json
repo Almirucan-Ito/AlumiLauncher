@@ -1,0 +1,9 @@
+{
+  "name": "時計とタイマー",
+  "name_en": "Clock & timers",
+  "description": "世界時計・ストップウォッチ・複数のタイマー・ポモドーロ(集中時間の記録つき)",
+  "description_en": "World clock, stopwatch, multiple timers and Pomodoro (with a focus-time log)",
+  "entry": "view/index.html",
+  "icon": "icon.svg",
+  "permissions": ["storage", "alarm"]
+}

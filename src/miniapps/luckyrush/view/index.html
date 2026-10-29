@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>ラッキーラッシュ</title>
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="stage.css"><link rel="stylesheet" href="panel.css"><link rel="stylesheet" href="dialog.css"><link rel="stylesheet" href="effects.css"></head><body>
+<canvas id="fx"></canvas><div id="vig"></div><div id="tint"></div><div class="flash" id="flash"></div><div class="banner" id="banner"></div>
+<div class="app" id="app">
+  <div class="top">
+    <div class="logo">LUCKY RUSH<small>RUSH 100回転 継続率 約90%</small></div>
+    <div class="tr"><div class="hi"><span>HIGH SCORE</span><b id="hi">0</b></div>
+    <button class="iconbtn" id="infoBtn" aria-label="info">?</button>
+    <input type="range" id="vol" min="0" max="100" value="70" aria-label="volume" title="音量">
+    <button class="iconbtn" id="snd" aria-label="sound">🔊</button></div>
+  </div>
+  <div class="stage" id="stage">
+    <div class="lamps" id="lamps"></div>
+    <div class="status"><span class="stl" id="stl">NORMAL</span><div class="bar"><i id="barfill"></i></div><span class="str" id="str"></span></div>
+    <div class="chips" id="chips"></div>
+    <div class="reels" id="reels"><div class="reel"></div><div class="reel"></div><div class="reel"></div><div class="reachTxt" id="reachTxt"></div></div>
+  </div>
+  <div class="meters"><div class="mt" title="前回当たってからの回転数(当たるとリセット)"><span>回転数</span><b id="since">0</b><em id="prevHit"></em></div><div class="mt" title="RUSH で行った総ゲーム数"><span>ゲーム数</span><b id="games">0</b></div></div>
+  <div class="counter"><span class="lb">連チャン</span><span class="n" id="chain">0</span><span class="u">連</span></div>
+  <div class="ctrl"><button class="pill" id="auto">AUTO</button><button id="spin"><span id="spinT">START</span><small>SPACE</small></button><button class="pill" id="turbo">TURBO</button></div>
+  <div class="foot"><div class="stat"><b id="sBest">0</b><span>最高連チャン</span></div><div class="stat"><b id="sRush">0</b><span>RUSH突入</span></div><div class="stat"><b id="sAvg">0</b><span>平均連チャン</span></div><div class="stat"><b id="sSpin">0</b><span>通算回転</span></div></div>
+  <div class="hist" id="hist"></div>
+</div>
+<div class="over" id="over"><div class="card"><h2>RUSH 終了</h2><div class="big" id="oScore">0<small>連</small></div><div class="rank" id="oRank"></div><div id="oGames" style="font-size:15px;font-weight:800;color:#fff;margin:2px 0 6px"></div><div class="new" id="oNew">NEW RECORD!</div><div id="oSub" style="font-size:12px;color:#ffcf9a"></div><button class="pill go" id="oBtn">もう一度</button></div></div>
+<div class="over" id="infoP"><div class="card"><h2>遊び方・確率</h2><div class="info" id="infoBody"></div><button class="pill go" id="infoClose">閉じる</button></div></div>
+<script src="../controller/bridge.js"></script><script src="../controller/rules.js"></script><script src="../controller/sound.js"></script><script src="../controller/confetti.js"></script><script src="../controller/reels.js"></script><script src="../controller/effects.js"></script><script src="../controller/freeze-reach.js"></script><script src="../controller/flow.js"></script><script src="../controller/result.js"></script><script src="../controller/input.js"></script><script src="../controller/main.js"></script></body></html>

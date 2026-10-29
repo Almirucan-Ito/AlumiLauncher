@@ -1,0 +1,9 @@
+{
+  "name": "全体検索",
+  "name_en": "Search everything",
+  "description": "ホームと、登録したフォルダの中のアイコンを、まとめて名前で探して起動します",
+  "description_en": "Find icons on Home and in your registered folders by name, and launch them",
+  "entry": "view/index.html",
+  "icon": "icon.svg",
+  "permissions": ["launcher"]
+}

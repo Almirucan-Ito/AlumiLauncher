@@ -1,0 +1,15 @@
+{
+  // ミニアプリ・ウィジェットの JavaScript(controller/*.js)の、ゆるい型の検査。
+  // 目的は、書き間違い(存在しない変数・関数の呼び出しなど)を見つけること。厳密な型は、求めない。
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+    "strict": false,
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  },
+  "include": ["src/miniapps/**/controller/*.js", "src/widgets/**/controller/*.js"]
+}

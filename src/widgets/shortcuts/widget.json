@@ -1,0 +1,9 @@
+{
+  "builtin": "shortcuts",
+  "icon": "icon.svg",
+  "name": "ショートカット",
+  "name_en": "Shortcuts",
+  "description": "ホームのアイコン・フォルダを、ドラッグして入れておけます(横 6 個まで。大は 2 段)。右クリックで登録を解除、ドラッグで順番を変えられます",
+  "description_en": "Drag icons and folders from Home into it (up to 6 per row; two rows when tall). Right-click to remove, drag to reorder",
+  "cells": [1, 7, 7]
+}

@@ -1,0 +1,94 @@
+/* 名前変更ダイアログ */
+/* ---------- 名前変更ダイアログ ---------- */
+.modal {
+  position: absolute;
+  inset: 0;
+  z-index: 70;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.35);
+  animation: fade 0.15s ease both;
+}
+.dialog {
+  width: min(340px, calc(100% - 32px));
+  padding: 18px 18px 16px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--menu-bg) var(--ui-alpha, 100%), transparent);
+  border: 1px solid var(--stroke);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  animation: rise 0.2s var(--ease) both;
+}
+.dialog h3 {
+  margin: 0 0 12px;
+  font-size: 15px;
+}
+.dialog input {
+  width: 100%;
+  padding: 9px 11px;
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+  background: var(--field);
+  color: inherit;
+  font: inherit;
+  font-size: 14px;
+  outline: none;
+  user-select: text;
+}
+.dialog input:focus {
+  border-color: var(--text-dim);
+}
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 14px;
+}
+.small.primary {
+  background: #2f6bff;
+  color: #fff;
+}
+.small.danger-btn {
+  background: #e5484d;
+  color: #fff;
+}
+.small.ghost-btn {
+  background: var(--field);
+}
+.reset {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  padding: 8px 0;
+  border-radius: 10px;
+  background: var(--field);
+  font-size: 12.5px;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+.reset:hover {
+  background: var(--on);
+}
+.reset.quit {
+  margin-top: 8px;
+}
+.reset.armed {
+  background: #e5484d;
+  color: #fff;
+}
+.check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+.check input {
+  width: 16px;
+  height: 16px;
+  accent-color: #2f6bff;
+  cursor: pointer;
+}
+.row-label {
+  width: 5.2em;
+}

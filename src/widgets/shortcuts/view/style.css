@@ -1,0 +1,86 @@
+/* ショートカットウィジェット: アイコンを、横 6 個まで、小・標準は 1 段、大は 2 段で並べる(大きさと段の数は、ShortcutsWidget.tsx が決める) */
+/* 全ウィジェット共通の指定(.widget.hfixed > .wcard = 縦並び)より強くして、中身を中央に置く */
+.wcard.wshortcuts,
+.widget.hfixed > .wcard.wshortcuts {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0;
+  /* 枠線は、内側の影で描く(アイコンを置く内側の大きさが、ウィジェットの幅・高さにぴったりになる) */
+  border: 0;
+  box-shadow:
+    var(--plate-shadow),
+    inset 0 0 0 1px color-mix(in srgb, var(--stroke) var(--ui-alpha, 100%), transparent);
+  /* 横にはみ出したときは、ホイールで動かす(つまみは出さない) */
+  overflow: auto hidden;
+  scrollbar-width: none;
+  border-radius: 14px;
+}
+.wshort-grid {
+  display: grid;
+  grid-auto-rows: min-content;
+  gap: 4px;
+  /* 中身が狭いときは中央に。はみ出すときは、左から並べて、横に動かせる */
+  width: max-content;
+  min-width: 100%;
+  justify-content: center;
+}
+.wshort {
+  position: relative;
+  aspect-ratio: 1;
+  touch-action: none;
+}
+.wshort.dragging {
+  z-index: 3;
+  opacity: 0.85;
+  pointer-events: none;
+}
+/* 並べ替えで、落とす位置の目印 */
+.wshort.over::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 2px var(--accent, #2f6bff);
+  pointer-events: none;
+}
+.wshort-open {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 12%;
+  border-radius: 12px;
+  color: var(--text-dim);
+  transition: transform 0.15s var(--ease);
+}
+/* フォルダは、ホームと同じ、中のアイコンを 9 マスで見せるプレート(大きさは、アイコン 1 つぶんに合わせる) */
+.wshort-open:has(.plate) {
+  padding: 6%;
+}
+.wshort-open .plate {
+  --plate: calc(var(--sc) * 0.88);
+}
+.wshort-open:hover {
+  transform: scale(1.08);
+}
+.wshort-open img,
+.wshort-open svg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+.wshort-open .ghost {
+  width: 70%;
+  height: 70%;
+  border-radius: 8px;
+  background: var(--glass);
+}
+.wcard.wshortcuts:has(.wshort-empty) {
+  justify-content: center;
+}
+.wshort-empty {
+  padding: 0 10px;
+  font-size: 11px;
+}

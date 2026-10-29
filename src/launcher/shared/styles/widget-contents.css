@@ -1,0 +1,31 @@
+/* ウィジェットの中身(よく使う・最近・検索・ToDo・タイマー) */
+/* ---------- ウィジェットの中身(よく使う・最近・検索・ToDo・付箋・タイマー) ---------- */
+.wcard {
+  padding: 8px 12px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--glass) var(--ui-alpha, 100%), transparent);
+  border: 1px solid var(--stroke);
+  color: var(--text);
+  font-size: 13px;
+}
+.wcard-title {
+  margin-bottom: 6px;
+  font-size: 11.5px;
+  color: var(--text-dim);
+}
+.wdim {
+  color: var(--text-dim);
+  font-size: 12px;
+}
+.wx {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1;
+}
+.wx:hover {
+  background: var(--glass-strong);
+  color: var(--text);
+}

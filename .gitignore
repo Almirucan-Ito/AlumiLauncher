@@ -1,0 +1,14 @@
+# 依存・ビルドの生成物
+node_modules/
+dist/
+coverage/
+src-tauri/target/
+src-tauri/gen/
+release/
+
+# エディタ・OS
+.DS_Store
+Thumbs.db
+*.log
+*.swp
+.idea/

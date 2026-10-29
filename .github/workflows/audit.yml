@@ -1,0 +1,31 @@
+name: Audit
+
+# 使っているライブラリに、既知の脆弱性が見つかっていないかを調べる。
+# 公開後に見つかるものもあるので、コードを変えなくても、毎週動かす。
+on:
+  schedule:
+    - cron: "0 3 * * 1"
+  workflow_dispatch:
+  push:
+    paths:
+      - src-tauri/Cargo.lock
+      - src-tauri/Cargo.toml
+      - package-lock.json
+      - .github/workflows/audit.yml
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-audit
+      - run: cargo audit
+        working-directory: src-tauri
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm audit --audit-level=high

@@ -1,0 +1,6 @@
+# Rust の版を固定する(rustup が、このフォルダの下で自動で使う)。上げるときは、全員が同じ版にそろうよう、ここだけを変える
+[toolchain]
+channel = "1.99.1"
+components = ["clippy", "rustfmt"]
+targets = ["x86_64-pc-windows-msvc"]
+profile = "minimal"

@@ -1,0 +1,175 @@
+/* ページャー(ホームとフォルダ内のアイコンの並び・ドラッグ・ページ送り) */
+/* ---------- ページャー ---------- */
+.pager {
+  position: relative;
+  height: 100%;
+  container-type: size;
+}
+.viewport {
+  height: 100%;
+  overflow: hidden;
+  touch-action: pan-y;
+}
+.track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.38s var(--ease);
+}
+/* 常にレイヤーを確保しておくとメモリを使うので、動かしている間だけにする */
+.track.dragging {
+  transition: none;
+  will-change: transform;
+}
+/* アイコンの大きさは設定値(--icon-size)を上限に、ウィンドウに収まるよう自動で縮む */
+.page {
+  --plate: max(
+    36px,
+    min(
+      var(--icon-size, 90px),
+      calc((100cqw - (var(--cols, 3) - 1) * var(--icon-gap, 18px)) / (var(--cols, 3) * 1.45)),
+      calc((100cqh - (var(--rows, 3) - 1) * var(--icon-gap, 18px) - var(--rows, 3) * 32px) / (var(--rows, 3) * 1.35))
+    )
+  );
+}
+.page {
+  flex: 0 0 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 3), calc(var(--plate) * 1.45));
+  grid-template-rows: repeat(var(--rows, 3), calc(var(--plate) * 1.35 + 32px));
+  gap: var(--icon-gap, 18px);
+  justify-content: center;
+  /* 余った高さは、行と行の間に配る(最初の行はヘッダーに、最後の行はフッターに寄る。中央に置くと、上下に大きな隙間ができる) */
+  align-content: space-between;
+  place-items: center;
+}
+.cell {
+  display: grid;
+  place-items: center;
+  transition: opacity 0.15s;
+}
+/* アイコンを置く位置の空き(何も描かず、周りのアイコンがよけて場所をあける) */
+.slot-hole {
+  width: calc(var(--plate) * 1.45);
+  height: calc(var(--plate) * 1.35 + 32px);
+}
+/* フォルダ内のアイコンをホームへ持ち出している間は、フォルダ内の画面を薄くして、後ろのホームを見せる */
+.overlay.leaving {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.cell.lifted {
+  opacity: 0.25;
+}
+/* 中央に重ねて、待っている途中(まだ離しても何も起きない)。少しだけふくらむ */
+.cell.pending .plate {
+  transform: scale(1.07);
+}
+.cell.pending .tile.bare .plate {
+  transform: scale(1.07);
+}
+/* 離したアイコンが、重ねた相手の中へ吸い込まれる */
+.drag-ghost.flying {
+  transition:
+    left 0.3s var(--ease-move),
+    top 0.3s var(--ease-move),
+    transform 0.3s var(--ease-move),
+    opacity 0.3s ease 0.08s;
+}
+.drag-ghost.flying.go {
+  transform: translate(-50%, -50%) scale(0.3);
+  opacity: 0;
+}
+/* ほかのアイコンを重ねて離すと、フォルダになる/フォルダに入る状態 */
+.cell.merge .plate {
+  transform: scale(1.16);
+  box-shadow:
+    0 0 0 3px var(--text-dim),
+    var(--plate-shadow);
+}
+.plate {
+  transition:
+    transform 0.15s var(--ease),
+    box-shadow 0.15s;
+}
+.drag-ghost {
+  position: fixed;
+  z-index: 50;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(1.12);
+  filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.5));
+}
+
+.edge {
+  position: absolute;
+  top: 50%;
+  width: 38px;
+  height: 38px;
+  margin-top: -19px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--glass-strong);
+  border: 1px solid var(--stroke);
+  transition:
+    background 0.15s,
+    transform 0.15s;
+  z-index: 2;
+}
+/* 常時アニメーションはCPU/GPUを使い続けるので、ホバー時だけ動かす */
+.edge:hover {
+  background: var(--on);
+  transform: translateX(var(--dx));
+}
+.edge-left {
+  left: -14px;
+  --dx: -3px;
+}
+.edge-right {
+  right: -14px;
+  --dx: 3px;
+}
+/* フォルダ内の ▷ ◁ は、見つけやすく押しやすいよう大きめにする。
+   枠の左右に専用の余白(--gutter)を取り、その中に置くので、枠からはみ出さず、アイコンにも重ならない */
+.sheet {
+  --arrow: clamp(36px, 7vmin, 54px);
+  --gutter: calc(var(--arrow) + 12px);
+}
+.sheet .edge {
+  width: var(--arrow);
+  height: var(--arrow);
+  margin-top: calc(var(--arrow) / -2);
+}
+.sheet .edge svg {
+  width: calc(var(--arrow) * 0.55);
+  height: calc(var(--arrow) * 0.55);
+}
+.sheet .edge-left {
+  left: calc(var(--gutter) * -1 + 6px);
+}
+.sheet .edge-right {
+  right: calc(var(--gutter) * -1 + 6px);
+}
+.dots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -22px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--dot);
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+.dot.on {
+  background: var(--dot-on);
+  transform: scale(1.25);
+}

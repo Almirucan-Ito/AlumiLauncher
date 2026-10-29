@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>予定とToDo</title>
+<link rel="stylesheet" href="style.css"></head><body>
+<div class="wrap">
+  <div class="tabs"><button class="tab on" data-t="todo" id="tabTodo"></button><button class="tab" data-t="cal" id="tabCal"></button></div>
+
+  <div class="view" id="v-todo">
+    <div class="add">
+      <input id="tt" maxlength="120"><input id="td" type="date"><input id="tc" list="cats" maxlength="20" style="width:110px"><datalist id="cats"></datalist>
+      <button id="tadd" class="primary"></button>
+    </div>
+    <div class="ctl">
+      <select id="fcat"></select>
+      <select id="fsort"></select>
+      <label><input type="checkbox" id="fdone"> <span id="fdoneL"></span></label>
+    </div>
+    <div class="list" id="tl"></div>
+    <div id="doneBox"></div>
+  </div>
+
+  <div class="view" id="v-cal" style="display:none">
+    <div class="cal-head"><button id="cprev">‹</button><b id="ctitle"></b><button id="cnext">›</button><button id="ctoday"></button></div>
+    <div class="grid" id="cgrid"></div>
+    <h4 id="dayTitle"></h4>
+    <div class="row"><input id="et" class="grow" maxlength="80"><input id="em" class="grow" maxlength="120"><button id="eadd" class="primary"></button></div>
+    <div class="list" id="dayList"></div>
+  </div>
+</div>
+<script src="../controller/core.js"></script><script src="../controller/todo.js"></script><script src="../controller/calendar.js"></script><script src="../controller/main.js"></script></body></html>

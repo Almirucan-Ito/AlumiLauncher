@@ -1,0 +1,28 @@
+/* search ウィジェットの見た目(本体の styles.css の後に読み込まれる) */
+.wsearch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 200px;
+  padding: 7px 10px;
+}
+
+.wsearch input {
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.wsearch input {
+  flex: 1;
+}
+
+.wsearch {
+  width: 100%;
+  min-width: 0;
+}

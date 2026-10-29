@@ -1,0 +1,81 @@
+/* フォルダを開いた状態 */
+/* ---------- フォルダを開いた状態 ---------- */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  container-type: size;
+  /* ぼかし(backdrop-filter)は最大化時に非常に重くなるため使わず、暗い半透明で代用 */
+  background: var(--overlay);
+  animation: pop 0.34s var(--ease) both;
+}
+.overlay.closing {
+  animation: unpop 0.18s ease-in both;
+}
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.15);
+  }
+}
+@keyframes unpop {
+  to {
+    opacity: 0;
+    transform: scale(0.15);
+  }
+}
+/* 開いたフォルダのモーダルは常に正方形(幅と高さの小さい方に合わせる) */
+.sheet {
+  /* 枠の外側(上下左右)に余白を広めに取る。アイコンをここへドラッグして外に出すと、ホームへ移動する */
+  --side: min(calc(100cqw - clamp(64px, 14vw, 160px)), calc(100cqh - clamp(64px, 14vh, 160px)));
+  position: relative;
+  width: var(--side);
+  height: var(--side);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 20px var(--gutter, 24px) 44px;
+  border-radius: 28px;
+  isolation: isolate;
+  border: 1px solid var(--stroke);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.35);
+}
+/* モーダルの背景だけを透過させる(アイコンや文字は透けない)。透過度は設定で調整 */
+.sheet::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--sheet-bg);
+  opacity: var(--sheet-opacity, 0.88);
+  pointer-events: none;
+}
+/* フォルダを開いている間、後ろの日時やアイコンをぼかす(静止した層に一度だけ掛かるので軽い) */
+.app.blur-behind .wbar,
+.app.blur-behind .home {
+  filter: blur(var(--modal-blur, 10px));
+}
+.sheet h2 {
+  margin: 0 0 8px;
+  text-align: center;
+  font-size: clamp(17px, 2.6vmin, 32px);
+  font-weight: 600;
+}
+.sheet .pager {
+  flex: 1;
+  min-height: 0;
+  height: auto;
+}
+.empty {
+  height: 200px;
+  display: grid;
+  place-items: center;
+  padding: 0 20px;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 14px;
+}

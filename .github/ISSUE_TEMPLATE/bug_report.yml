@@ -1,0 +1,69 @@
+name: バグの報告 / Bug report
+description: 動かない・おかしい、を報告する / Something is broken
+labels: ["bug", "needs-repro"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        報告ありがとうございます。日本語でも英語でも構いません。 / Japanese or English is fine.
+        **セキュリティの問題は、ここに書かないでください**(SECURITY.md を見てください)。 / Do not report security issues here (see SECURITY.md).
+  - type: input
+    id: version
+    attributes:
+      label: AlumiLauncher のバージョン / Version
+      description: 設定の一番下に出ています。 / Shown at the bottom of Settings.
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: 入れ方 / Installation type
+      options:
+        - インストーラー版 / Installer
+        - ポータブル版 / Portable
+        - ソースから(開発中) / Built from source
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows のバージョン / Windows version
+      description: "`winver` で分かります。 / Run `winver`."
+      placeholder: "Windows 11 23H2 (22631)"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 再現の手順 / Steps to reproduce
+      placeholder: |
+        1. …を開く
+        2. …を押す
+        3. …になる
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待した動き / Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 実際の動き / Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: ログ / Log(任意 / optional)
+      description: |
+        設定の「記録(ログ)のフォルダを開く」の `alumi.log` の、関係する部分。ファイルのパスなどが入ることがあるので、確かめてから貼ってください。
+        The relevant part of `alumi.log` (Settings → Open the log folder). It may contain file paths; please check before pasting.
+      render: text
+  - type: textarea
+    id: extra
+    attributes:
+      label: 補足・スクリーンショット / Notes and screenshots

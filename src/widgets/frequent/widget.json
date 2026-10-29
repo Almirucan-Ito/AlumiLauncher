@@ -1,0 +1,9 @@
+{
+  "builtin": "frequent",
+  "icon": "icon.svg",
+  "name": "よく使うもの",
+  "name_en": "Frequently used",
+  "description": "起動回数の多いアプリ上位 5 個",
+  "description_en": "Your 5 most launched items",
+  "cells": [3, 7, 5]
+}

@@ -1,0 +1,10 @@
+{
+  "builtin": "todo",
+  "icon": "icon.svg",
+  "data_app": "planner",
+  "name": "ToDo",
+  "name_en": "To-do",
+  "description": "チェックリストを保存します",
+  "description_en": "A saved checklist",
+  "cells": [3, 7, 5]
+}

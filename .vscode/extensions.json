@@ -1,0 +1,13 @@
+{
+  // このフォルダを開いたとき、VS Code が「おすすめの拡張機能」として案内するもの
+  "recommendations": [
+    "rust-lang.rust-analyzer",
+    "tauri-apps.tauri-vscode",
+    "tamasfe.even-better-toml",
+    "usernamehw.errorlens",
+    "eamodio.gitlens",
+    "github.vscode-pull-request-github",
+    "ms-vscode.powershell",
+    "ms-ceintl.vscode-language-pack-ja"
+  ]
+}

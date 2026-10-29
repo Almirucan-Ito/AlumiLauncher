@@ -1,0 +1,22 @@
+{
+  // VS Code の「Dev Containers」で開くと、編集・型チェック・lint・画面のテスト・Rust の検査(Windows 向け)が、すぐ使えます。
+  // 注意: アプリの実行・Rust のテスト・インストーラの作成は、Windows が必要です(コンテナでは、できません)。
+  "name": "AlumiLauncher",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": { "version": "24" },
+    "ghcr.io/devcontainers/features/rust:1": { "version": "1.99.1", "profile": "minimal" }
+  },
+  "postCreateCommand": "rustup component add clippy rustfmt && rustup target add x86_64-pc-windows-msvc && npm ci",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "rust-lang.rust-analyzer",
+        "tamasfe.even-better-toml",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "editorconfig.editorconfig"
+      ]
+    }
+  }
+}

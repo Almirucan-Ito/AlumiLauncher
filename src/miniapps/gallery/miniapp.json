@@ -1,0 +1,9 @@
+{
+  "name": "画像ビューア",
+  "name_en": "Image viewer",
+  "description": "フォルダの写真を、一覧・拡大・スライドショーで見ます",
+  "description_en": "View the photos in a folder as a list, enlarged, or as a slideshow",
+  "entry": "view/index.html",
+  "icon": "icon.svg",
+  "permissions": ["images"]
+}

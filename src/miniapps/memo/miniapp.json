@@ -1,0 +1,9 @@
+{
+  "name": "メモ",
+  "name_en": "Memo",
+  "description": "メモ帳(ホームの .txt を開いて編集・新規作成)と、付箋ボード",
+  "description_en": "A notepad (open, edit and create the .txt files on Home) and a sticky-note board",
+  "entry": "view/index.html",
+  "icon": "icon.svg",
+  "permissions": ["saveText", "storage", "files"]
+}

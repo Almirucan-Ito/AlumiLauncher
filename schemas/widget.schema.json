@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AlumiLauncher ウィジェット (widget.json)",
+  "type": "object",
+  "required": ["name"],
+  "additionalProperties": false,
+  "properties": {
+    "name": { "type": "string", "maxLength": 40, "description": "ウィジェットの名前(40 字まで)" },
+    "name_en": { "type": "string", "description": "英語表示のときの名前" },
+    "description": { "type": "string", "maxLength": 200, "description": "説明(200 字まで)" },
+    "description_en": { "type": "string", "description": "英語表示のときの説明" },
+    "entry": { "type": "string", "default": "index.html", "description": "最初に開くファイル(フォルダ内)" },
+    "width": { "type": "integer", "minimum": 1, "default": 160, "description": "幅(px)" },
+    "height": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "高さ(px)。いまは使いません(ヘッダー・フッターでは、利用者が選ぶ 小 / 標準 / 大 の高さになります)"
+    },
+    "cells": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "type": "integer" },
+      "description": "幅の範囲と標準 [最小, 最大, 標準](マスの数。ヘッダー・フッターは横 7 マスなので、最大は 7 まで)"
+    },
+    "builtin": {
+      "type": "string",
+      "description": "ランチャーが持つ組み込みウィジェットの名前(指定すると index.html は使わない)"
+    },
+    "data_app": { "type": "string", "description": "データを共有するミニアプリのフォルダ名" },
+    "network": { "type": "boolean", "description": "true で外部通信を宣言(初めて使うとき、利用者の同意が要る)" }
+  }
+}

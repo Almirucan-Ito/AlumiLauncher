@@ -1,0 +1,9 @@
+{
+  "builtin": "music",
+  "icon": "icon.svg",
+  "name": "ミュージック",
+  "name_en": "Music",
+  "description": "曲名・前へ/再生/次へ・音量・再生位置(ミニアプリ「ミュージック」を操作します)",
+  "description_en": "Title, previous / play / next, volume and position (controls the Music mini app)",
+  "cells": [3, 7, 5]
+}

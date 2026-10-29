@@ -1,0 +1,209 @@
+/* ウィジェットの置き場所・音楽プレーヤー・ガラスの表現など、あとから重ねた調整(前のファイルの規則を上書きするので、順番を変えない) */
+/* 音楽プレーヤーのウィジェット */
+/* ---------- ウィジェットの置き場所: ヘッダー・フッターは、横 7 マス(中心は 4)。マスは正方形(1 辺は --wcell。欄の幅から決まり、アイコンの大きさが上限) ---------- */
+.wbar {
+  display: grid;
+  grid-template-columns: repeat(7, var(--wcell, minmax(0, 1fr)));
+  /* 縦も、1 マス = --wcell の正方形。ウィジェットは、欄の高さ(縦のマスの数)のぶん、縦に連なる */
+  grid-auto-rows: var(--wcell, 40px);
+  gap: 4px;
+  align-items: start;
+  justify-content: center;
+}
+.widget {
+  min-width: 0;
+  width: 100%;
+  max-width: none;
+}
+.widget > .wcard,
+.widget > .wmod {
+  width: 100%;
+}
+/* 動かしている間だけ出す、マスの目印(番号つき) */
+.wcell {
+  align-self: stretch;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  border: 1px dashed var(--stroke);
+  color: var(--text-dim);
+  font-size: 11px;
+  pointer-events: none;
+}
+.wcell:nth-child(4) {
+  border-color: var(--text-dim);
+}
+/*
+ * ウィジェットの高さは、1・2・3 マス(1 マスは 44px。2 マスは 92px、3 マスは 140px)で決まる。
+ * 中身は、高さに合わせて切り替える(各ウィジェットの style.css の @container)。.widget が、その基準(幅と高さを測る入れ物)になる。
+ */
+.widget {
+  container-type: size;
+}
+/* 幅(横のマスの数)と高さ(縦のマスの数)の、小さいほうに合わせて、中身の大きさを変える(1 マスの高さにも収まる) */
+.widget > .clock {
+  container-type: size;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.clock .time {
+  font-size: clamp(12px, min(19cqw, 56cqh), 150px);
+}
+.clock .date {
+  margin-top: clamp(1px, min(1.2cqw, 3cqh), 16px);
+  font-size: clamp(8px, min(4cqw, 17cqh), 30px);
+}
+/* 幅が狭いか、とても低いときは、日付を隠す */
+@container (max-width: 90px) or (max-height: 38px) {
+  .clock .date {
+    display: none;
+  }
+}
+/* 音楽プレーヤーのウィジェット: どんな背景でも見えるように、UI の色(--sheet-bg など)をそのまま使った、しっかりした面にする */
+/* 再生位置・音量: 進んだ分を、文字の色で塗る */
+/* ---------- ウィジェットを動かすときの目印 ---------- */
+/* マスの区切り(番号なし)。動かしている間だけ出る */
+.wcell {
+  border: 1px dashed color-mix(in srgb, var(--text) 22%, transparent);
+  background: color-mix(in srgb, var(--text) 4%, transparent);
+}
+/* いま離したら、ウィジェット全体が収まる場所を囲む枠 */
+.wdrop {
+  align-self: stretch;
+  border: 2px solid var(--text);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--text) 14%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--text) 14%, transparent);
+  pointer-events: none;
+  z-index: 40;
+}
+.wdrop.bad {
+  border-color: #e5484d;
+  background: color-mix(in srgb, #e5484d 18%, transparent);
+  box-shadow: none;
+}
+.widget.moving {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+  border-radius: 12px;
+}
+
+/* 高さを決めたウィジェットは、中身をその高さいっぱいに広げる(収まらないぶんは、中で動かして見る) */
+.widget.hfixed > .wcard,
+.widget.hfixed > .clock,
+.widget.hfixed > .wmod {
+  height: 100%;
+  overflow: auto;
+}
+.widget.hfixed > .clock {
+  overflow: hidden;
+}
+.widget.hfixed > .wcard {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.widget.hfixed .wtodo-list {
+  flex: 1;
+  max-height: none;
+}
+.widget.hfixed > .wmod {
+  height: 100% !important;
+}
+/* メニューは、文字がすべて入る幅にする(画面の端でも、文字が切れない) */
+.menu {
+  width: max-content;
+  max-width: calc(100vw - 16px);
+}
+/* ウィジェットの中のボタンは、ふれあわないように、間をあける */
+/* 音楽プレーヤーのウィジェット: 左に操作、右端に縦の音量 */
+/* フォルダのタイル(板)と、ウィジェットのカード(時計を除く)は、同じ色・同じ透過度にそろえる。
+   UI の色の「透過度」(--ui-alpha)も、ここに反映する */
+.plate {
+  background: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--plate-a) var(--ui-alpha, 100%), transparent),
+    color-mix(in srgb, var(--plate-b) var(--ui-alpha, 100%), transparent)
+  );
+  border-color: color-mix(in srgb, var(--stroke) var(--ui-alpha, 100%), transparent);
+}
+.wcard {
+  background: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--plate-a) var(--ui-alpha, 100%), transparent),
+    color-mix(in srgb, var(--plate-b) var(--ui-alpha, 100%), transparent)
+  );
+  border: 1px solid color-mix(in srgb, var(--stroke) var(--ui-alpha, 100%), transparent);
+  box-shadow:
+    var(--plate-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px); /* 後ろの画像が、文字の邪魔にならないように */
+}
+/* ---------- 音楽プレーヤーのウィジェット(縦に並べる。音量は、右上の横向きの棒) ---------- */
+/* 幅が狭いときは、音量の棒は隠して、ミュートのボタンだけにする */
+/* 高さを広げたときは、中身を縦に均等に配る(崩れない) */
+.widget.hfixed .wmusic {
+  justify-content: space-between;
+}
+
+/* ---------- 「クリア」(以前の「グレー」): すりガラスのように透けた見た目 ---------- */
+/* 色の見本: 透けていることが分かるように、市松模様の上に、白い半透明をのせる */
+.sw-gray .chip {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.14)),
+    repeating-conic-gradient(rgba(130, 134, 146, 0.55) 0 25%, rgba(235, 238, 245, 0.55) 0 50%) 0 0 / 8px 8px;
+  border-color: rgba(255, 255, 255, 0.7);
+}
+.sw-auto .chip {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55) 50%, #f4f6fa 50%);
+}
+/* 背景: 色を薄く、白い光を少し足して、後ろが透けて見えるガラスのようにする */
+.app.theme-gray {
+  --bg: linear-gradient(160deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.05) 58%), rgba(72, 77, 90, 0.62);
+  --sheet-bg: rgb(82, 87, 100);
+}
+/* UI: ガラスのような、透けたメニュー・ダイアログ・フォルダの板 */
+.app.ui.ui-gray {
+  --sheet-bg: rgb(82, 87, 100);
+  --menu-bg: rgba(54, 58, 70, 0.74);
+  --plate-a: rgba(255, 255, 255, 0.26);
+  --plate-b: rgba(255, 255, 255, 0.08);
+}
+.menu,
+.dialog,
+.settings {
+  backdrop-filter: blur(16px) saturate(1.15);
+}
+/* ToDo ウィジェット(次にやること・今日の予定) */
+/* 一覧の、データ・キャッシュの大きさと消去 */
+.wstore {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+.wstore .small {
+  padding: 1px 8px;
+  font-size: 11px;
+}
+.dialog-actions.wrap-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+/* 外部と通信するウィジェットの、確認のカード */
+.wconsent {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+}
+.wconsent span {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ミュージックのウィジェット: シャッフル・リピート(右上) */

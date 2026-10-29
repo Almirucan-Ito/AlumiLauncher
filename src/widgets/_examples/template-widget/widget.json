@@ -1,0 +1,9 @@
+{
+  "name": "ひな形ウィジェット",
+  "name_en": "Template widget",
+  "description": "新しいウィジェットを作るときの、ひな形(コピーして書き換えます)",
+  "description_en": "A template for new widgets (copy and edit)",
+  "entry": "view/index.html",
+  "width": 160,
+  "height": 60
+}

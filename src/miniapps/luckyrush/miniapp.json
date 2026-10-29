@@ -1,0 +1,9 @@
+{
+  "name": "ラッキーラッシュ",
+  "name_en": "Lucky Rush",
+  "description": "継続率90%のRUSHで、何連チャンできるか挑戦するミニゲーム(ハイスコア付き)",
+  "description_en": "A mini game: see how many RUSH chains you can get with a 90% continuation rate (with a high score)",
+  "entry": "view/index.html",
+  "icon": "icon.svg",
+  "permissions": ["storage"]
+}

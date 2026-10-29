@@ -1,0 +1,100 @@
+/* タイル(アイコン 1 つ・ホームに直接置いたアイコン) */
+/* ---------- タイル(ウィンドウの大きさに合わせて拡大縮小) ---------- */
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--plate) * 0.12);
+  width: calc(var(--plate) * 1.45);
+  transition: transform 0.18s var(--ease);
+}
+.tile:hover {
+  transform: translateY(-3px);
+}
+.tile:active {
+  transform: scale(0.92);
+}
+.plate {
+  position: relative;
+  width: var(--plate);
+  height: var(--plate);
+  display: grid;
+  place-items: center;
+  border-radius: calc(var(--plate) * 0.28);
+  background: linear-gradient(160deg, var(--plate-a), var(--plate-b));
+  border: 1px solid var(--stroke);
+  box-shadow:
+    var(--plate-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+/* ホームに直接置いた単独のアイコン: 周りの枠(膜)なしで、アイコンを大きく表示する */
+.tile.bare .plate {
+  background: none;
+  border-color: transparent;
+  box-shadow: none;
+}
+.tile.bare .icon {
+  width: 100%;
+  height: 100%;
+}
+.cell.merge .tile.bare .plate {
+  box-shadow: 0 0 0 3px var(--text-dim);
+}
+.icon {
+  width: 72%;
+  height: 72%;
+  object-fit: contain;
+  animation: fade 0.25s ease both;
+}
+.ghost {
+  display: block;
+  width: 56%;
+  height: 56%;
+  border-radius: 12px;
+  background: var(--glass);
+}
+.plate.folder {
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 3px;
+  padding: calc(var(--plate) * 0.1);
+  place-items: stretch;
+}
+.mini {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 5px;
+  animation: fade 0.25s ease both;
+}
+.plate.add {
+  border-style: dashed;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-dim);
+  transition:
+    color 0.15s,
+    background 0.15s;
+}
+.tile:hover .plate.add {
+  color: var(--text);
+  background: var(--glass);
+}
+.label {
+  max-width: 100%;
+  font-size: clamp(11px, calc(var(--plate) * 0.17), 22px);
+  line-height: 1.25;
+  text-align: center;
+  text-shadow: var(--label-shadow);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-all;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}

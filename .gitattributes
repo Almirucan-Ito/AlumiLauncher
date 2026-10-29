@@ -1,0 +1,15 @@
+# 改行は LF にそろえる(Windows で作ったファイルとの混在を防ぐ)。PowerShell のスクリプトだけは CRLF
+* text=auto eol=lf
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+
+# 画像・アイコンなどは、そのまま(変換しない)
+*.png binary
+*.ico binary
+*.bmp binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.exe binary
+*.zip binary

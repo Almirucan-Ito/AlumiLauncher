@@ -1,0 +1,19 @@
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: #3a3d4a;
+  color: #f3f4f6;
+  font-family: "Segoe UI", "Yu Gothic UI", sans-serif;
+  display: grid;
+  place-items: center;
+}
+button {
+  font: inherit;
+  padding: 10px 18px;
+  border: 0;
+  border-radius: 12px;
+  background: #565ae8;
+  color: #fff;
+  cursor: pointer;
+}

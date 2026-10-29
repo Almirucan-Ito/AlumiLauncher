@@ -1,0 +1,63 @@
+/* とても小さいウィンドウ(アイコンだけを詰めて並べる) */
+/* ---------- とても小さいウィンドウ(高さ 200px 未満): アイコンだけを詰めて並べる ---------- */
+.app.compact .clock,
+.app.compact .presets,
+.app.compact .tile .label,
+.app.compact .dots {
+  display: none;
+}
+.app.compact .titlebar {
+  height: 26px;
+  padding: 0 6px;
+}
+.app.compact .titlebar button {
+  width: 20px;
+  height: 20px;
+}
+.app.compact .titlebar button svg {
+  width: 9px;
+  height: 9px;
+}
+.app.compact .home {
+  padding: 4px 78px 4px 10px;
+}
+.app.compact .page {
+  --plate: max(
+    24px,
+    min(
+      var(--icon-size, 90px),
+      calc((100cqw - (var(--cols, 3) - 1) * var(--icon-gap, 18px)) / (var(--cols, 3) * 1.45)),
+      calc((100cqh - (var(--rows, 3) - 1) * var(--icon-gap, 18px)) / (var(--rows, 3) * 1.1))
+    )
+  );
+  grid-template-rows: repeat(var(--rows, 3), calc(var(--plate) * 1.1));
+}
+.app.compact .corner {
+  right: 6px;
+  bottom: 6px;
+  gap: 4px;
+}
+.app.compact .round {
+  width: 22px;
+  height: 22px;
+}
+.app.compact .round svg {
+  width: 12px;
+  height: 12px;
+}
+.app.compact .edge {
+  display: none;
+}
+.app.compact .sheet {
+  width: calc(100cqw - 12px);
+  height: calc(100cqh - 12px);
+  padding: 4px 78px 4px 10px;
+  border-radius: 14px;
+}
+.app.compact .sheet h2 {
+  display: none;
+}
+.app.compact .settings {
+  max-height: calc(100% - 40px);
+  bottom: 34px;
+}

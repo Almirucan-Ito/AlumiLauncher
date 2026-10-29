@@ -1,0 +1,29 @@
+{
+  // 「ターミナル」→「タスクの実行」から使える、よく使うコマンド
+  "version": "2.0.0",
+  "tasks": [
+    { "label": "確認(まとめて)", "type": "shell", "command": "npm run check", "group": "test", "problemMatcher": [] },
+    { "label": "画面のテスト", "type": "shell", "command": "npm test", "group": "test", "problemMatcher": [] },
+    {
+      "label": "画面だけをブラウザで確認",
+      "type": "shell",
+      "command": "npm run dev",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Rust の検査(clippy)",
+      "type": "shell",
+      "command": "cargo clippy -- -D warnings",
+      "options": { "cwd": "${workspaceFolder}/src-tauri" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Rust のテスト(Windows)",
+      "type": "shell",
+      "command": "cargo test",
+      "options": { "cwd": "${workspaceFolder}/src-tauri" },
+      "problemMatcher": []
+    }
+  ]
+}

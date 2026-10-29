@@ -1,0 +1,9 @@
+{
+  "builtin": "timer",
+  "icon": "icon.svg",
+  "name": "タイマー",
+  "name_en": "Timer",
+  "description": "集中 25 分・休憩のタイマー。終わったら知らせます",
+  "description_en": "Focus / break timer. Notifies you when it ends",
+  "cells": [4, 7, 5]
+}

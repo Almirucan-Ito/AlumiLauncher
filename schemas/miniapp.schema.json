@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AlumiLauncher ミニアプリ (miniapp.json)",
+  "type": "object",
+  "required": ["name"],
+  "additionalProperties": false,
+  "properties": {
+    "name": { "type": "string", "maxLength": 40, "description": "ミニアプリの名前(40 字まで)" },
+    "name_en": { "type": "string", "description": "英語表示のときの名前" },
+    "description": { "type": "string", "maxLength": 200, "description": "説明(200 字まで)" },
+    "description_en": { "type": "string", "description": "英語表示のときの説明" },
+    "entry": { "type": "string", "default": "index.html", "description": "最初に開くファイル(フォルダ内)" },
+    "icon": { "type": "string", "description": "アイコン画像(フォルダ内。png / svg / jpg / webp / gif)" },
+    "permissions": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "使いたい機能。書いたものだけ postMessage の窓口から使える",
+      "items": { "enum": ["saveText", "storage", "player", "files", "launcher", "images", "alarm"] }
+    },
+    "network": { "type": "boolean", "description": "true で外部通信を宣言(初めて使うとき、利用者の同意が要る)" },
+    "url": {
+      "type": "string",
+      "pattern": "^https://",
+      "description": "Web サイトを別画面(WebView)で開く(https のみ。指定すると entry は使わない)"
+    },
+    "mobile": { "type": "boolean", "description": "Web ミニアプリを、スマホのブラウザとして開く" }
+  }
+}

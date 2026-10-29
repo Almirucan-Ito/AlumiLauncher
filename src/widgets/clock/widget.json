@@ -1,0 +1,9 @@
+{
+  "builtin": "clock",
+  "icon": "icon.svg",
+  "name": "時計",
+  "name_en": "Clock",
+  "description": "時刻と日付",
+  "description_en": "Time and date",
+  "cells": [1, 7, 5]
+}

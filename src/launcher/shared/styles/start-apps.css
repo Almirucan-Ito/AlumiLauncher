@@ -1,0 +1,13 @@
+/* 「スタートメニューから追加」 */
+/* 「スタートメニューから追加」: 絞り込みの入力欄 */
+.start-search {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+  padding: 7px 10px;
+  border: 1px solid var(--stroke);
+  border-radius: 8px;
+  background: var(--field);
+  color: var(--text);
+  font: inherit;
+}

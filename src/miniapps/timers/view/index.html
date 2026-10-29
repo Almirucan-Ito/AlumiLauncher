@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>時計とタイマー</title>
+<link rel="stylesheet" href="style.css"></head><body>
+<div class="wrap">
+  <div class="tabs" id="tabs"></div>
+  <div class="view" id="v-world"><div class="row"><select id="zsel" class="grow"></select><button id="zadd"></button></div><div id="zl" style="display:flex;flex-direction:column;gap:6px"></div></div>
+  <div class="view" id="v-sw" style="display:none"><div class="sw" id="swt"></div><div class="btns"><button id="swgo" class="primary"></button><button id="swlap"></button><button id="swrst"></button></div><div id="laps"></div></div>
+  <div class="view" id="v-timer" style="display:none">
+    <div class="row"><input id="tlb" class="grow" maxlength="30"><div class="dur"><input id="th" type="number" min="0" max="99" value="0"><label id="hL"></label><input id="tm" type="number" min="0" max="59" value="5"><label id="mL"></label><input id="ts" type="number" min="0" max="59" value="0"><label id="sL"></label></div><button id="tadd" class="primary"></button></div>
+    <div class="row" id="presets"></div>
+    <div id="tl" style="display:flex;flex-direction:column;gap:6px"></div>
+  </div>
+  <div class="view" id="v-pomo" style="display:none">
+    <div class="dim" style="text-align:center" id="pphase"></div>
+    <div class="big" id="ptime">25:00</div>
+    <div class="btns"><button id="pgo" class="primary"></button><button id="pstop"></button></div>
+    <h4 id="todayH"></h4><div class="big" style="font-size:28px;padding:0" id="today">0</div>
+    <h4 id="weekH"></h4><div class="bars" id="week"></div>
+    <h4 id="cfgH"></h4>
+    <div class="cfg"><label><span id="cf1"></span><input id="pf" type="number" min="1" max="180"></label><label><span id="cf2"></span><input id="ps" type="number" min="1" max="60"></label><label><span id="cf3"></span><input id="pl" type="number" min="1" max="120"></label><label><span id="cf4"></span><input id="pc" type="number" min="2" max="12"></label></div>
+  </div>
+</div>
+<script src="../controller/core.js"></script><script src="../controller/world.js"></script><script src="../controller/stopwatch.js"></script><script src="../controller/multi-timers.js"></script><script src="../controller/pomodoro.js"></script><script src="../controller/main.js"></script></body></html>

@@ -1,0 +1,7 @@
+{
+  "name": "今年の進み具合",
+  "description": "今年が何% 過ぎたかを表示します(サンプル)",
+  "entry": "view/index.html",
+  "width": 200,
+  "height": 56
+}

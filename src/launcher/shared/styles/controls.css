@@ -1,0 +1,32 @@
+/* 右下のボタン */
+/* ---------- 右下のボタン ---------- */
+.corner {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  z-index: 30;
+  display: flex;
+  gap: 8px;
+}
+.round {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--glass) var(--ui-alpha, 100%), transparent);
+  border: 1px solid var(--stroke);
+  color: var(--text-dim);
+  transition:
+    background 0.15s,
+    color 0.15s,
+    transform 0.3s var(--ease);
+}
+.round:hover,
+.round.active {
+  background: var(--glass-strong);
+  color: var(--text);
+}
+.round:active {
+  transform: rotate(-90deg) scale(0.92);
+}

@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>画像ビューア</title>
+<link rel="stylesheet" href="style.css"></head><body>
+<div class="wrap">
+  <div class="row"><button id="bFolder" class="primary"></button><button id="bFiles"></button><button id="bLast"></button><span class="dim grow" id="cnt" style="text-align:right"></span></div>
+  <div class="grid" id="grid"></div>
+</div>
+<div id="viewer">
+  <div class="stage" id="stage"><button class="nav l" id="prev">‹</button><img id="big" alt=""><button class="nav r" id="next">›</button></div>
+  <div class="vb"><span class="cap" id="cap"></span><button id="play"></button><select id="iv"><option value="2">2s</option><option value="4" selected>4s</option><option value="8">8s</option><option value="15">15s</option></select><label class="dim"><input type="checkbox" id="shuf"> <span id="shufL"></span></label><button id="close"></button></div>
+</div>
+<script src="../controller/main.js"></script></body></html>

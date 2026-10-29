@@ -1,0 +1,9 @@
+{
+  "builtin": "search",
+  "icon": "icon.svg",
+  "name": "検索",
+  "name_en": "Search",
+  "description": "入力した文字で、ホームのアイコンを絞り込みます(/ か Ctrl+F で入力、Enter で開く)",
+  "description_en": "Filter Home icons by name (/ or Ctrl+F to type, Enter to open)",
+  "cells": [3, 7, 5]
+}

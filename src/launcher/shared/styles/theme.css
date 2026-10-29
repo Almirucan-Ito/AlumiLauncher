@@ -1,0 +1,111 @@
+:root {
+  --ease: cubic-bezier(0.22, 0.9, 0.28, 1);
+  /* アイコンがスッと動くときの動き(最初は速く、最後はふわっと止まる) */
+  --ease-move: cubic-bezier(0.2, 0.9, 0.25, 1);
+  font-family: "Segoe UI Variable Text", "Segoe UI", "Yu Gothic UI", "Meiryo UI", system-ui, sans-serif;
+}
+
+/* ---------- テーマ ---------- */
+.app {
+  /* グレー(既定・半透明) */
+  /* 背景色は不透明で定義し、透過度は設定(--bg-opacity)で .app::before に掛ける */
+  --bg: linear-gradient(160deg, rgba(255, 255, 255, 0.07), transparent 45%), rgb(60, 62, 70);
+  --text: #f3f4f6;
+  --text-dim: rgba(243, 244, 246, 0.62);
+  --stroke: rgba(255, 255, 255, 0.14);
+  --glass: rgba(255, 255, 255, 0.09);
+  --glass-strong: rgba(255, 255, 255, 0.16);
+  --plate-a: rgba(255, 255, 255, 0.2);
+  --plate-b: rgba(255, 255, 255, 0.06);
+  --plate-shadow: 0 8px 22px rgba(0, 0, 0, 0.3);
+  --sheet-bg: rgb(76, 78, 88);
+  --overlay: rgba(20, 22, 28, 0.62);
+  --dot: rgba(255, 255, 255, 0.3);
+  --dot-on: #fff;
+  --menu-bg: rgba(38, 40, 48, 0.96);
+  --label-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  --field: rgba(255, 255, 255, 0.1);
+  --on: rgba(255, 255, 255, 0.24);
+  --glow: 255, 255, 255;
+  color: var(--text);
+  color-scheme: dark;
+}
+.app.theme-dark {
+  --sheet-bg: rgb(30, 33, 46);
+  --bg: linear-gradient(160deg, rgba(255, 255, 255, 0.04), transparent 45%), rgb(14, 16, 24);
+  --overlay: rgba(4, 5, 10, 0.55);
+  --menu-bg: rgba(24, 26, 36, 0.96);
+}
+.app.theme-white {
+  --bg: linear-gradient(160deg, rgba(255, 255, 255, 0.5), transparent 50%), rgb(244, 246, 250);
+}
+.app.theme-white,
+.app.is-light {
+  --text: #1d2230;
+  --text-dim: rgba(29, 34, 48, 0.6);
+  --stroke: rgba(0, 0, 0, 0.12);
+  --glass: rgba(0, 0, 0, 0.05);
+  --glass-strong: rgba(0, 0, 0, 0.09);
+  --plate-a: rgba(255, 255, 255, 0.95);
+  --plate-b: rgba(255, 255, 255, 0.6);
+  --plate-shadow: 0 6px 16px rgba(30, 40, 70, 0.16);
+  --sheet-bg: rgb(252, 252, 254);
+  --overlay: rgba(228, 231, 240, 0.68);
+  --dot: rgba(0, 0, 0, 0.22);
+  --dot-on: #1d2230;
+  --menu-bg: rgba(255, 255, 255, 0.97);
+  --label-shadow: none;
+  --field: rgba(0, 0, 0, 0.06);
+  --on: rgba(0, 0, 0, 0.12);
+  --glow: 70, 100, 255;
+  color-scheme: light;
+}
+.app.theme-accent {
+  --sheet-bg: color-mix(in srgb, var(--accent) 48%, #000);
+  --bg:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.14), transparent 50%), color-mix(in srgb, var(--accent) 62%, #000);
+  --overlay: color-mix(in srgb, color-mix(in srgb, var(--accent) 40%, #000) 55%, transparent);
+}
+/* 好きな色(指定した色そのまま・半透明) */
+.app.theme-custom {
+  --sheet-bg: color-mix(in srgb, var(--accent) 86%, #fff);
+  --bg: linear-gradient(160deg, rgba(255, 255, 255, 0.12), transparent 50%), var(--accent);
+  --overlay: color-mix(in srgb, var(--accent) 45%, rgba(0, 0, 0, 0.35));
+}
+.app.theme-custom.is-light {
+  --overlay: color-mix(in srgb, var(--accent) 55%, rgba(255, 255, 255, 0.5));
+}
+/* 好きな画像 */
+.app.theme-image {
+  --sheet-bg: rgb(46, 49, 60);
+  --bg:
+    linear-gradient(rgba(8, 10, 16, var(--dim)), rgba(8, 10, 16, var(--dim))) center / cover no-repeat,
+    var(--bgimg, none) center / cover no-repeat, rgb(40, 42, 50);
+  --overlay: rgba(8, 10, 16, 0.5);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  user-select: none;
+}
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  overflow: hidden;
+}
+button:focus,
+button:focus-visible {
+  outline: none; /* キーボードを使ったあとに出る黒い丸(フォーカスの枠)を出さない */
+}
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}

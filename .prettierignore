@@ -1,0 +1,13 @@
+dist
+node_modules
+src-tauri
+release
+package-lock.json
+src/miniapps/**/*.html
+src/miniapps/**/*.svg
+src/widgets/**/*.html
+src/widgets/**/*.svg
+README.md
+README_JP.md
+README_EN.md
+THIRD_PARTY_LICENSES.md

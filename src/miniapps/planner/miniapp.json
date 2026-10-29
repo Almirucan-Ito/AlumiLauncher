@@ -1,0 +1,9 @@
+{
+  "name": "予定とToDo",
+  "name_en": "Planner & To-do",
+  "description": "ToDo(期限・カテゴリ・並べ替え)と、予定のカレンダー",
+  "description_en": "A to-do list (due dates, categories, sorting) and an event calendar",
+  "entry": "view/index.html",
+  "icon": "icon.svg",
+  "permissions": ["storage"]
+}

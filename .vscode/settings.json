@@ -1,0 +1,17 @@
+{
+  // 改行は LF にそろえる(Windows で作ったファイルとの混在を防ぐ)
+  "files.eol": "\n",
+  "json.schemas": [
+    { "fileMatch": ["**/miniapp.json"], "url": "./schemas/miniapp.schema.json" },
+    { "fileMatch": ["**/widget.json"], "url": "./schemas/widget.schema.json" }
+  ],
+  "files.encoding": "utf8",
+  // Rust のプロジェクトは src-tauri の中にある
+  "rust-analyzer.linkedProjects": ["src-tauri/Cargo.toml"],
+  // Windows 向けとして解析する(Windows 専用の部分が、有効になる。WSL では、実行はできず、型の確認だけ)
+  "rust-analyzer.cargo.target": "x86_64-pc-windows-msvc",
+  "rust-analyzer.check.command": "clippy",
+  // ビルドの生成物は、検索・監視の対象にしない
+  "search.exclude": { "**/node_modules": true, "**/dist": true, "**/src-tauri/target": true, "**/release": true },
+  "files.watcherExclude": { "**/node_modules/**": true, "**/src-tauri/target/**": true }
+}

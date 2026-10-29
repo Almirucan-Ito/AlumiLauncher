@@ -1,0 +1,7 @@
+{
+  "name": "ひな形ミニアプリ",
+  "description": "新しいミニアプリを作るときの、ひな形(コピーして書き換えます)",
+  "entry": "view/index.html",
+  "icon": "icon.svg",
+  "permissions": ["storage"]
+}
