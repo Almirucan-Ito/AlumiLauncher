@@ -116,36 +116,42 @@ export function useMiniApps({
   }, [refreshMinis]);
 
   /**
-   * ミニアプリの「テキストを保存」: ホームにテキストファイルを作る。書き出したテキストのアイコンは、ホームの一番後ろに置く(いまの並びを保存してから、最後に足すので、ほかのアイコンが後ろに回り込まない)。
-   * @param title ファイル名(拡張子は自動で付く)
-   * @param body 中身
-   * @returns 作ったファイルの名前
+   * ホームに作ったファイルのアイコンを、ホームの一番後ろに置く。いまの並びを保存してから、最後に足すので、ほかのアイコンが後ろに回り込まない(並びに無いものは、一覧の順で入ってしまうため、順を決めておく)。
+   * @param path 作ったファイルのパス
+   * @returns ホームのアイコンの保存先(launcherFolder)のパス
    */
-  const saveTextForMini = async (title: string, body: string): Promise<string> => {
-    const path = await api.createTextFile(title, body, t("newTextName"));
+  const placeLastOnHome = async (path: string): Promise<string> => {
     const home = launcherRef.current || (await api.getLauncherFolder());
     setLauncherPath(home);
-    // 書き出したテキストのアイコンは、ホームの一番後ろに置く(いまの並びを保存してから、最後に足す)
     const key = `i:${path}`;
     const keys = entriesRef.current
       .filter((e) => e.kind !== "slot")
       .map(entryKey)
       .filter((k) => k !== key);
     mutate((c) => ({ ...c, orders: { ...c.orders, [HOME_ORDER_KEY]: [...keys, key] } }));
-    bumpFolder(home);
+    return home;
+  };
+
+  /**
+   * ミニアプリの「テキストを保存」: ホームにテキストファイルを作る。書き出したテキストのアイコンは、ホームの一番後ろに置く。
+   * @param title ファイル名(拡張子は自動で付く)
+   * @param body 中身
+   * @returns 作ったファイルの名前
+   */
+  const saveTextForMini = async (title: string, body: string): Promise<string> => {
+    const path = await api.createTextFile(title, body, t("newTextName"));
+    bumpFolder(await placeLastOnHome(path));
     return fileLabel(path);
   };
 
   /**
-   * ホームに、ミニアプリのアイコン(`.alumiapp`)を作る。
+   * ホームに、ミニアプリのアイコン(`.alumiapp`)を作る。ホームの一番後ろに置く。
    * @param a 対象のミニアプリ
    */
   const addMiniToHome = async (a: MiniApp) => {
     try {
-      await api.createMiniAppShortcut(a.id, miniAppLabel(a));
-      const home = launcherRef.current || (await api.getLauncherFolder());
-      setLauncherPath(home);
-      bumpFolder(home);
+      const path = await api.createMiniAppShortcut(a.id, miniAppLabel(a));
+      bumpFolder(await placeLastOnHome(path));
       flash(t("memoSaved", { name: miniAppLabel(a) }));
     } catch (err) {
       flash(t("failed", { err: String(err) }));
