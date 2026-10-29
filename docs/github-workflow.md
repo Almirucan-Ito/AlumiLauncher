@@ -34,9 +34,32 @@ GitHub に公開したあと、どう運用するかの方針です。個人で�
 
 ## 3. ブランチとコミット
 
-- `main` … いつも動く状態にしておく。**直接は書き込まない**(Pull Request だけ)
-- 作業用のブランチ名: `feature/<内容>`(機能)、`fix/<内容>`(修正)、`docs/<内容>`(文書)
-- マージは **Squash and merge**(1 つの Pull Request = 1 つのコミットにまとめて、履歴を読みやすくする)
+長く残るブランチは、次の 2 つだけです。
+
+- `main` … 公開する版。いつも動く状態にしておく。**直接は書き込まない**(Pull Request だけ)。リリースのタグは、ここに打つ
+- `develop` … 開発の本線。**直接は書き込まない**(Pull Request だけ)。作業用のブランチは、ここから作る
+
+作業用のブランチは、`develop` から作り、取り込まれたら**削除**します(ローカルもリモートも)。
+
+- `feature/<内容>` … 機能の追加
+- `fix/<内容>` … バグの修正
+- (`docs/<内容>` … 文書だけの変更)
+
+流れは、次のとおりです。
+
+```
+develop ─┬─ feature/xxx ──PR→ develop      (1. 機能・修正を develop に取り込む)
+         └─ fix/yyy     ──PR→ develop
+develop ──────────────────PR→ main         (2. ある程度、問題ないと判断したら、main に取り込む)
+```
+
+1. `develop` から `feature/…` か `fix/…` を作り、変更して、`develop` 宛ての Pull Request を出す。**公開したあとは、レビューが 1 人必要**(公開するまでは、不要)。
+2. `develop` で、ある程度、問題ないと判断したら、`develop` から `main` 宛ての Pull Request を出す。こちらも**公開したあとは、レビューが 1 人必要**(公開するまでは、不要)。
+3. 取り込み方:
+   - 作業用のブランチ → `develop` は **Squash and merge**(1 つの Pull Request = 1 つのコミットにまとめて、履歴を読みやすくする)
+   - `develop` → `main` は **Create a merge commit**。Squash にすると、`develop` と `main` の履歴が食い違い、次の Pull Request で、同じ差分が出続けるため。
+4. `main` に取り込んだあと、`main` を `develop` に戻す必要は、ありません(merge commit にしているため)。
+
 - コミットのメッセージ: 1 行目に「何をしたか」を短く(日本語で構いません)。必要なら、空行のあとに理由を書く
 
 ## 4. ラベル
@@ -53,6 +76,8 @@ GitHub に公開したあと、どう運用するかの方針です。個人で�
 
 ## 5. Pull Request
 
+- 出し先(base)は、作業用のブランチなら **`develop`**、リリース前の取り込みなら **`main`** です。間違えやすいので、出す前に確かめてください。
+- **公開したあとは、レビュー(承認)が 1 人必要**です(公開するまでは、不要。自分で取り込んで構いません)。自分の Pull Request は、自分では承認できません。レビューする人がいないあいだは、ブランチ保護の「管理者は例外にする」を許すか、協力者を 1 人入れます(後の「8」を参照)。
 - テンプレート(`.github/pull_request_template.md`)のチェックを埋めます。
 - **CI(GitHub Actions)が通ること**が条件です。CI は、`npm run check`・`cargo fmt --check`・`cargo clippy -- -D warnings`・`cargo test` を、Windows で実行します。
 - 画面を変えたときは、変更前後のスクリーンショットを貼ってください。
@@ -71,7 +96,7 @@ GitHub に公開したあと、どう運用するかの方針です。個人で�
 - バージョンは **SemVer**(`MAJOR.MINOR.PATCH`)。バグ修正だけなら PATCH、機能追加は MINOR、互換のない変更は MAJOR を上げます。
 - 変更の記録は [CHANGELOG.md](../CHANGELOG.md) に、リリースごとに書きます(利用者に見える変更だけ)。
 - リリースの手順:
-  1. `main` の CI が通っていることを確認する
+  1. `develop` から `main` への Pull Request を出して、CI が通ったら、取り込む(公開したあとは、レビューも受ける)
   2. バージョンを上げる(`package.json`・`src-tauri/Cargo.toml`・`src-tauri/tauri.conf.json` の 3 か所)
   3. [manual-test.md](manual-test.md) を、実機で通す
   4. `npm run licenses`(依存が変わったとき)、`CHANGELOG.md` を更新する
@@ -92,7 +117,7 @@ GitHub に公開したあと、どう運用するかの方針です。個人で�
 - [ ] `LICENSE`(MIT)・`THIRD_PARTY_LICENSES.md` がある
 - [ ] README に、スクリーンショットと、ダウンロードの案内がある
 - [ ] Issue のテンプレート・`SECURITY.md`・`CODE_OF_CONDUCT.md` がある(このリポジトリに用意済み)
-- [ ] リポジトリの設定: 説明・Topics(`launcher`・`windows`・`tauri`・`react`)を入れる / Discussions を有効にする / **`main` のブランチ保護**(CI の成功を必須・force push 禁止・直接 push 禁止)/ Secret scanning
+- [ ] リポジトリの設定: 説明・Topics(`launcher`・`windows`・`tauri`・`react`)を入れる / Discussions を有効にする / **`main` と `develop` のブランチ保護**(Pull Request を必須・**承認 1 人を必須**・CI の成功を必須・force push 禁止・直接 push 禁止。Settings → Branches → Add branch ruleset)/ Secret scanning。**非公開のリポジトリでは、無料のプランだと、ブランチ保護は使えません**(公開すると使えます)
 - [ ] ラベルを作る(上の「4」)
 - [ ] `docs/manual-test.md` を実機で通した
 - [ ] 初回リリース(`v1.0.0`)を作る
