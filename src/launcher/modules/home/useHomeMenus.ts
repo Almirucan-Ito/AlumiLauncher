@@ -1,12 +1,12 @@
 import { useCallback, type Dispatch, type SetStateAction } from "react";
-import { api, type Config, type FolderEntry, type Item } from "../../shared/api/ApiModel";
+import { api, type FolderEntry, type Item } from "../../shared/api/ApiModel";
 import { t } from "../../shared/i18n/i18n";
+import { useLatest } from "../../shared/lib/useLatest";
 import { type MenuAction } from "../../shared/ui/MenuModel";
 import { type useFolderActions } from "../folders/useFolderActions";
 
 /**
  * ホーム・フォルダ内・アイコンの、右クリックメニュー(項目の中身)を作る。
- * @param config いまの設定(フォルダの一覧が変わったら、メニューの中身を作り直す)
  * @param actions フォルダ・アイコンの操作(`useFolderActions`)
  * @param showMenu メニューを出す関数
  * @param setRenaming 名前の変更の画面を開く関数
@@ -14,19 +14,19 @@ import { type useFolderActions } from "../folders/useFolderActions";
  * @returns フォルダのタイル・開いているフォルダの背景・アイコン・ホームの背景の、右クリックの処理
  */
 export function useHomeMenus({
-  config,
   actions,
   showMenu,
   setRenaming,
   setDeleting,
 }: {
-  config: Config | null;
   actions: ReturnType<typeof useFolderActions>;
   showMenu: (x: number, y: number, actions: MenuAction[]) => void;
   setRenaming: Dispatch<SetStateAction<FolderEntry | null>>;
   setDeleting: Dispatch<SetStateAction<Item | null>>;
 }) {
-  const { shellAction, removeFolder, createHomeFolder, createHomeFile } = actions;
+  const { shellAction, createHomeFolder, createHomeFile } = actions;
+  // 操作の関数は毎回作り直されるので、メニューの中身は、押した時点の最新のものを、参照から使う(メニューの関数の同一性は保つ)
+  const actionsRef = useLatest(actions);
 
   /** ホームのフォルダの右クリックメニュー(名前の変更・エクスプローラーで開く・プロパティ・一覧から外す)。 */
   const onFolderTileMenu = useCallback(
@@ -36,12 +36,15 @@ export function useHomeMenus({
         { label: t("openInExplorer"), run: () => api.reveal(folder.path, false) },
         {
           label: t("properties"),
-          run: () => shellAction(() => api.showProperties(folder.path), "propertiesFailed"),
+          run: () => actionsRef.current.shellAction(() => api.showProperties(folder.path), "propertiesFailed"),
         },
-        { label: t("removeFolder", { name: folder.name }), run: () => removeFolder(folder.id), danger: true },
+        {
+          label: t("removeFolder", { name: folder.name }),
+          run: () => actionsRef.current.removeFolder(folder.id),
+          danger: true,
+        },
       ]),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [showMenu, config],
+    [showMenu, setRenaming, actionsRef],
   );
   /** 開いているフォルダ内の背景の右クリックメニュー(名前の変更・このフォルダを開く)。 */
   const onOpenFolderMenu = useCallback(

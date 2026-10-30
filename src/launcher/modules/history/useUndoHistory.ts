@@ -1,6 +1,7 @@
 import { useEffect, useRef, type MutableRefObject } from "react";
 import { type Config, type FolderEntry } from "../../shared/api/ApiModel";
 import { t } from "../../shared/i18n/i18n";
+import { useLatest } from "../../shared/lib/useLatest";
 
 /** 元に戻す/やり直しのために覚える、フォルダ一覧と並び順の写し。 */
 export type Snapshot = { folders: FolderEntry[]; orders: Record<string, string[]> };
@@ -117,6 +118,8 @@ export function useUndoHistory({
     }
   };
 
+  // キーの購読は一度だけ行い、中では、いつも最新の `runHistory` を呼ぶ
+  const runHistoryRef = useLatest(runHistory);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (!(e.ctrlKey || e.metaKey)) return;
@@ -125,17 +128,15 @@ export function useUndoHistory({
       const k = e.key.toLowerCase();
       if (k === "z" && !e.shiftKey) {
         e.preventDefault();
-        runHistory("undo");
+        runHistoryRef.current("undo");
       } else if (k === "y" || (k === "z" && e.shiftKey)) {
         e.preventDefault();
-        runHistory("redo");
+        runHistoryRef.current("redo");
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-    // runHistory は ref と安定した関数だけを使うので、購読し直さない
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [runHistoryRef]);
 
   return { snapshot, restoreSnapshot, pushHistory, clearHistory, flushReorder, reorderRecorded, recorded };
 }

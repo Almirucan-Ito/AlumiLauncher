@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { type Config, DEFAULT_SETTINGS, type MiniApp, api } from "../../shared/api/ApiModel";
 import { appData } from "../../shared/api/AppDataModel";
+import { useLatest } from "../../shared/lib/useLatest";
 import { retryMissingIcons } from "../icons/IconController";
 import { alarms } from "../miniapps/AlarmController";
 import { migrateLegacyData } from "../miniapps/MigrationController";
@@ -17,20 +18,20 @@ import { launcherHooks } from "../plugins/PluginRegistry";
  */
 export function useStartupRestore(config: Config | null, mutate: (fn: (c: Config) => Config) => void) {
   const dataReady = useRef(false);
+  const mutateRef = useLatest(mutate);
   useEffect(() => {
     if (!config || dataReady.current) return;
     dataReady.current = true;
     (async () => {
       const list = await api.listMiniApps().catch(() => [] as MiniApp[]);
       if (await migrateLegacyData(config.settings?.widgetData ?? {})) {
-        mutate((c) => ({ ...c, settings: { ...DEFAULT_SETTINGS, ...c.settings, widgetData: {} } }));
+        mutateRef.current((c) => ({ ...c, settings: { ...DEFAULT_SETTINGS, ...c.settings, widgetData: {} } }));
       }
       await Promise.all(launcherHooks.map((h) => h.onStart?.())); // 音楽プレーヤーの復元など
       for (const a of list) alarms.restore(a.id, (await appData.load("miniapp", a.id))._alarms);
     })();
-    // 設定が最初に読めたときに、一度だけ行う(`mutate` は変わらない)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config]);
+    // 設定が最初に読めたときに、一度だけ行う(`dataReady` で、2 回目以降は何もしない)
+  }, [config, mutateRef]);
 
   useEffect(() => {
     const id = setTimeout(retryMissingIcons, 1500);

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type MutableRefObject } from "react";
+import { useLatest } from "../lib/useLatest";
 import { shiftDown } from "../drag/ShiftKeyController";
 import {
   CENTER_SETTLE_MS,
@@ -140,17 +141,16 @@ export function usePagerDrag<T>({
   };
 
   // ウィンドウのフォーカスが外れたら(スクリーンショットなど)、ドラッグを取り消す。そのままだと、アイコンが持ち上がったまま残る
+  const cancelOnBlurRef = useLatest(() => {
+    if (!dragIdRef.current) return;
+    endDrag();
+    onDragCancel?.();
+  });
   useEffect(() => {
-    const onBlur = () => {
-      if (!dragIdRef.current) return;
-      endDrag();
-      onDragCancel?.();
-    };
+    const onBlur = () => cancelOnBlurRef.current();
     window.addEventListener("blur", onBlur);
     return () => window.removeEventListener("blur", onBlur);
-    // endDrag は、ref と安定した関数だけを使うので、購読し直さない
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [cancelOnBlurRef]);
 
   /** ポインタを押したとき。並べ替えができる一覧なら、長押しの時間(`dragDelayMs`)のあとで、ドラッグを始める(それまでに 8px 以上動いたら、スワイプとみなして長押しをやめる)。 */
   const onPointerDown = (e: React.PointerEvent) => {
