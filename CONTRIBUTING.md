@@ -1,8 +1,6 @@
 # 開発に参加するには
 
-> English: [CONTRIBUTING_EN.md](CONTRIBUTING_EN.md)(この文書の英語版)と、[docs/architecture_EN.md](docs/architecture_EN.md)(構造の英語の概要)があります。
-
-> **言語について**: 英語の Issue・Pull Request・コードのコメントも、歓迎します。ただし、作者は**英語を読むのが苦手**なので、英語のものへの返事は、遅れることがあり、**長いあいだ、返事ができないことも**あります。短く、はっきり(題名・何を変えたか・なぜか)書いてもらえると、助かります。日本語で、短い要約を添えてもらえると、さらに助かります。
+> **言語について**: Issue・Pull Request・コードのコメントは、**日本語**で書いてください。作者は英語を読めないため、英語のものには、返事ができないことがあります。短く、はっきり(題名・何を変えたか・なぜか)書いてもらえると、助かります。
 
 AlumiLauncher は、Windows 用の「スマートフォンのホーム画面風」ランチャーです(Tauri 2 + React / TypeScript + Rust)。
 この文書は、はじめてソースを触る人向けの手引きです。環境のつくり方は [docs/setup.md](docs/setup.md)、アプリのビルド方法は [docs/build.md](docs/build.md)、GitHub での進め方(Issue・Pull Request・リリース)は [docs/github-workflow.md](docs/github-workflow.md)、画面の文言の管理は [docs/i18n.md](docs/i18n.md) にあります。構造の詳しい説明は [docs/architecture.md](docs/architecture.md) にあります。
@@ -100,7 +98,7 @@ src/miniapps/<id>/
 ## 4. 書き方の決まり
 
 - 整形・検査は、設定ファイルがルールです(`.editorconfig` / `.prettierrc.json` / `eslint.config.js` / `src-tauri/rustfmt.toml`)。迷ったら `npm run format` と `cargo fmt` に任せます。
-- 関数・定数・型には、**日本語の説明コメント**を付けます(TypeScript は JSDoc、Rust は `///`)。英語のコメントでも構いません(作者は英語を読むのに時間がかかるので、短く、はっきり書いてください。上の「言語について」を参照)。
+- 関数・定数・型には、**日本語の説明コメント**を付けます(TypeScript は JSDoc、Rust は `///`)。
 - 文字コードは UTF-8、改行は LF です(`.ps1` だけ BOM 付き)。
 - 画面の文言は、ランチャー本体は `i18n.ts`、ミニアプリ・ウィジェットは自分のフォルダの文言を通します(直書きしません)。
 - ミニアプリ・ウィジェットは、本体から独立させます。本体の内部は触らず、`postMessage` の窓口と `permissions`、`definePlugin` だけを使います。
@@ -111,7 +109,7 @@ src/miniapps/<id>/
 2. `cargo fmt --check` / `cargo clippy -- -D warnings` / `cargo test` が通る(Rust を触ったとき)
    - 画面側のロジックを足したら、`*.test.ts(x)` も足す(`npm test`)
 3. `npm run dev` で、触った画面を見る(Windows 固有の機能は、`npm run tauri dev` で見る)
-4. 文言を変えたなら、日本語・英語の両方を直した
-5. ユーザー向けの動きが変わったなら、`README_JP.md` と `README_EN.md` の両方も直した
+4. アプリの画面の文言を変えたなら、日本語・英語の両方を直した(アプリの表示言語は、日本語と英語に対応しています)
+5. ユーザー向けの動きが変わったなら、`README_JP.md` も直した
 
 > `npm run dev` のブラウザ確認では、Windows 固有の機能(ドラッグアウト、サムネイル、WebView2 など)は動きません。それらは実機(Windows)でだけ確認できます。確認していない部分は、提出時にその旨を書いてください。

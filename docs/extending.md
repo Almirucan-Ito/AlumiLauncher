@@ -1,6 +1,6 @@
 # ミニアプリ・ウィジェットを作る(拡張の手引き)
 
-利用者向けの説明は [README_JP.md](../README_JP.md)(英語は [README_EN.md](../README_EN.md))にあります。ここは、ミニアプリ・ウィジェットを**作る・追加する**人向けです。
+利用者向けの説明は [README_JP.md](../README_JP.md) にあります。ここは、ミニアプリ・ウィジェットを**作る・追加する**人向けです。
 ソースの中での置き場所と作り方(同梱する場合)は、[CONTRIBUTING.md](../CONTRIBUTING.md) と [architecture.md](architecture.md) を見てください。
 
 ## ウィジェット

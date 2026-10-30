@@ -1,26 +1,23 @@
-# セキュリティについて / Security Policy
+# セキュリティについて
 
-## 脆弱性の報告 / Reporting a vulnerability
+## 脆弱性の報告
 
 セキュリティ上の問題を見つけたときは、**公開の Issue には書かないでください**。
 GitHub の **Security タブ → "Report a vulnerability"**(非公開の報告)から連絡してください。
 
-Please do **not** open a public issue for security problems.
-Use **Security → "Report a vulnerability"** on the GitHub repository (private reporting).
+次を書いていただけると助かります。
 
-次を書いていただけると助かります / Please include:
-
-- 何が起きるか(影響) / What can happen (impact)
-- 再現の手順 / Steps to reproduce
-- 影響を受けるバージョン / Affected version
+- 何が起きるか(影響)
+- 再現の手順
+- 影響を受けるバージョン
 
 返事は、**1 週間以内を目安**にします(個人のプロジェクトのため、遅れることがあります)。修正したあと、報告してくださった方の了承を得て、お名前を CHANGELOG に載せます(希望しない場合は、載せません)。
 
-## 対象 / Supported versions
+## 対象
 
-最新のリリースだけを、修正の対象にします。 / Only the latest release receives fixes.
+最新のリリースだけを、修正の対象にします。
 
-## このアプリの安全の考え方 / Security model
+## このアプリの安全の考え方
 
 - アプリ自身は、**外部と通信しません**。通信が要るミニアプリ・ウィジェットは、`"network": true` の宣言と、利用者の同意が必要です。
 - ミニアプリ・ウィジェットは、`sandbox` 付きの別画面で動き、`miniapp.json` の `permissions` に書いた機能だけを使えます。

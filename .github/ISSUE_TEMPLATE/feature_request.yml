@@ -1,37 +1,37 @@
-name: 機能の要望 / Feature request
-description: こんな機能がほしい、を伝える / Suggest an idea
+name: 機能の要望
+description: こんな機能がほしい、を伝える
 labels: ["enhancement"]
 body:
   - type: textarea
     id: problem
     attributes:
-      label: 困っていること・やりたいこと / The problem
-      description: 「何ができなくて困っているか」から書いてください。 / Start from what you are trying to do.
+      label: 困っていること・やりたいこと
+      description: 「何ができなくて困っているか」から書いてください。
     validations:
       required: true
   - type: textarea
     id: idea
     attributes:
-      label: こうなってほしい / Proposed solution
+      label: こうなってほしい
     validations:
       required: true
   - type: textarea
     id: alternatives
     attributes:
-      label: ほかに考えた方法 / Alternatives(任意 / optional)
+      label: ほかに考えた方法(任意)
   - type: dropdown
     id: area
     attributes:
-      label: どの領域か / Area
+      label: どの領域か
       options:
-        - ランチャー本体 / Core
-        - ウィジェット / Widget
-        - ミニアプリ / Mini app
-        - 文書 / Docs
-        - わからない / Not sure
+        - ランチャー本体
+        - ウィジェット
+        - ミニアプリ
+        - 文書
+        - わからない
   - type: checkboxes
     id: contribute
     attributes:
-      label: 手伝えますか? / Can you help?
+      label: 手伝えますか?
       options:
-        - label: 自分で作ってみたい(Pull Request を出せる) / I can send a pull request
+        - label: 自分で作ってみたい(Pull Request を出せる)

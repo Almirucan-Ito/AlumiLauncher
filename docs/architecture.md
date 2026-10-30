@@ -1,7 +1,5 @@
 # 構造の説明
 
-> English: [architecture_EN.md](architecture_EN.md)(この文書の英語の概要)
-
 ## 全体像
 
 ```

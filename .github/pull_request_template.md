@@ -8,7 +8,7 @@
 - [ ] `cargo fmt --check` / `cargo clippy -- -D warnings` / `cargo test`(Rust を触ったとき)
 - [ ] 画面を目で確認した(`npm run dev` / `npm run tauri dev`)
 - [ ] 文言は日本語・英語の両方を直した
-- [ ] README(`README_JP.md` と `README_EN.md`)と `CHANGELOG.md` を直した(ユーザー向けの動きが変わったとき)
+- [ ] README(`README_JP.md`)と `CHANGELOG.md` を直した(ユーザー向けの動きが変わったとき)
 
 ## 確認できていないこと
 

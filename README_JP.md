@@ -1,7 +1,5 @@
 # AlumiLauncher
 
-日本語 | [English](README_EN.md)
-
 ## AlumiLauncher とは
 
 スマートフォンのホーム画面のように、アプリ・ファイル・フォルダを**グリッドに並べて、クリックで起動**できる Windows 用ランチャーです。

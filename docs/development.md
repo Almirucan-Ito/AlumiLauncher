@@ -34,7 +34,7 @@ SmartScreen の警告をなくすには、コード署名証明書での署名�
 | Rust の検査                      | clippy(警告ゼロ)                       | -                        | `cargo clippy -- -D warnings`                       |
 
 - 全部まとめて確認: `npm run check`(tsc + ESLint + Prettier + ミニアプリ・ウィジェットの検査 + 画面のテスト)
-- 関数・定数・型には、日本語の説明コメント(TypeScript は JSDoc、Rust は `///`)を付けます。英語のコメントでも構いません。
+- 関数・定数・型には、日本語の説明コメント(TypeScript は JSDoc、Rust は `///`)を付けます。
 - ミニアプリ・ウィジェットの HTML・CSS・ブラウザ用の JavaScript(`src\miniapps`・`src\widgets`)は、本体とは独立しているため、ESLint の対象外です(HTML 以外の CSS・JavaScript は、Prettier で整形します。HTML は、空白で見た目が変わることがあるため、手で整えます。ESLint の代わりに `npm run check:miniapps` で、JSON・ファイルの有無・JavaScript の文法を、`npm run check:js` で、存在しない名前の使用(書き間違い)を検査します)。ランチャー側の TypeScript(`index.tsx` など)は、本体と同じ規約です。
 
 ## ソースコードの場所
