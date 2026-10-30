@@ -37,7 +37,7 @@
   "bundle": {
     "active": true,
     "targets": ["nsis"],
-    "publisher": "Almiruca",
+    "publisher": "Almirucan-Ito",
     "shortDescription": "Home-screen style app launcher",
     "icon": ["icons/32x32.png", "icons/128x128.png", "icons/icon.ico"],
     "resources": { "../LICENSE": "LICENSE.txt", "../THIRD_PARTY_LICENSES.md": "THIRD_PARTY_LICENSES.md" },

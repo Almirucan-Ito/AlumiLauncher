@@ -7,7 +7,7 @@ export const t = defineMessages(
     shortcutsAdded: "「{name}」を追加しました",
     shortcutsExists: "「{name}」は、もう入っています",
     shortcutsFull: "これ以上は入れられません(いまの高さでは {n} 個まで)",
-    shortcutsRemove: "「{name}」の登録を解除",
+    shortcutsRemove: "「{name}」を外す",
     shortcutsLabel: "ショートカット",
   },
   {
