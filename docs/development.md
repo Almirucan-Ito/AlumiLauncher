@@ -10,7 +10,9 @@
 npm ci
 npm run tauri dev      # 開発
 npm run tauri build    # インストーラーを作成(src-tauri/target/release/bundle/nsis/)
-.\scripts\release.ps1            # 通常版+チェックサムを release/ に作成(-Zip でポータブル版、-Offline でオフライン版も)
+.\scripts\release.ps1            # インストーラー+チェックサムを release/ に作成
+.\scripts\release.ps1 -Zip       # 上に加えて、ポータブル版 zip(AlumiLauncher_Portable.zip)も作成(配布するときは、こちら)
+.\scripts\release.ps1 -Offline   # 上に加えて、オフライン版(WebView2 同梱)も作成
 ```
 
 ### コード署名(任意)

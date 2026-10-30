@@ -45,13 +45,15 @@ rustup show  # フォルダの中で実行すると、rust-toolchain.toml の版
 
 ## 3. 動かす
 
-| やりたいこと                                  | コマンド                                              |
-| --------------------------------------------- | ----------------------------------------------------- |
-| ブラウザで画面だけ確認(Rust なし・疑似データ) | `npm run dev` → http://localhost:1420                 |
-| アプリとして起動(Windows。変更が自動で反映)   | `npm run tauri dev`                                   |
-| 提出前の確認(まとめて)                        | `npm run check`                                       |
-| Rust のテスト                                 | `cd src-tauri; cargo test`                            |
-| インストーラーを作る([build.md](build.md))    | `.\scripts\release.ps1`(`-Zip` でポータブル版 zip も) |
+| やりたいこと                                   | コマンド                              |
+| ---------------------------------------------- | ------------------------------------- |
+| ブラウザで画面だけ確認(Rust なし・疑似データ)  | `npm run dev` → http://localhost:1420 |
+| アプリとして起動(Windows。変更が自動で反映)    | `npm run tauri dev`                   |
+| 提出前の確認(まとめて)                         | `npm run check`                       |
+| Rust のテスト                                  | `cd src-tauri; cargo test`            |
+| インストーラーだけを作る([build.md](build.md)) | `.\scripts\release.ps1`               |
+| インストーラーと、ポータブル版の zip を作る    | `.\scripts\release.ps1 -Zip`          |
+| インストーラーと、オフライン版を作る           | `.\scripts\release.ps1 -Offline`      |
 
 - 初回の `npm run tauri dev` は、Rust のビルドで数分かかります。2 回目からは速くなります。
 - すでにインストール版の AlumiLauncher が動いていると、開発中のアプリは、**二重起動を避ける仕組み**で、すぐ閉じてしまいます。先に、トレイから終了してください。

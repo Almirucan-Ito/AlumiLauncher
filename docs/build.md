@@ -45,10 +45,12 @@ AlumiLauncher を、配布できる形(インストーラー・ポータブル�
 リポジトリ直下で、次のどれかを実行します。
 
 ```powershell
-.\scripts\release.ps1            # インストーラーだけ(ふだんは、これで十分)
-.\scripts\release.ps1 -Zip       # インストーラー + ポータブル版 zip
+.\scripts\release.ps1            # インストーラーだけ(動作の確認には、これで十分)
+.\scripts\release.ps1 -Zip       # インストーラー + ポータブル版 zip(配布するときは、こちら)
 .\scripts\release.ps1 -Offline   # インストーラー + オフライン版
 ```
+
+`-Zip` と `-Offline` は、同時に付けられます(`.\scripts\release.ps1 -Zip -Offline`)。
 
 - 初回は、Rust の部品をすべてビルドするので、PC によっては十数分かかります。2 回目からは、変えた部分だけなので、短くなります(筆者の PC では 1〜2 分)。
 - 中では、`npm run tauri build`(= `tsc && vite build` で画面を作り、`cargo build --release` で本体を作り、NSIS でインストーラーにする)を動かしています。スクリプトを使わず、インストーラーだけを作るなら、次のとおりです。
@@ -60,6 +62,22 @@ AlumiLauncher を、配布できる形(インストーラー・ポータブル�
   この場合の出力先は、`src-tauri\target\release\bundle\nsis\AlumiLauncher_<版>_x64-setup.exe` です(配布用の名前には、変わりません)。
 
 - 終わると、`release\` の中身と、チェックサムが表示されます。
+
+### ポータブル版 zip(`-Zip`)について
+
+`-Zip` を付けると、`release\AlumiLauncher_Portable.zip` ができます。インストーラーを作るときにできる本体(`AlumiLauncher.exe`)に、次のファイルを添えて、`AlumiLauncher` フォルダごと zip にしたものです。
+
+| zip の中のファイル           | 内容                                                                                               |
+| ---------------------------- | -------------------------------------------------------------------------------------------------- |
+| `AlumiLauncher.exe`          | アプリ本体(インストーラーに入っているものと同じ)                                                   |
+| `portable.txt`               | ポータブル版の目印。exe の隣にあると、データは、exe の隣の `data` フォルダに保存される(削除しない) |
+| `はじめにお読みください.txt` | 使い方(置く場所・データの保存先・SmartScreen の警告が出たときの操作)                               |
+| `LICENSE.txt`                | このアプリのライセンス(MIT)                                                                        |
+| `THIRD_PARTY_LICENSES.md`    | 使っているライブラリのライセンス                                                                   |
+
+- 使う人は、zip を解凍して、`AlumiLauncher.exe` を起動するだけです(インストール不要・削除はフォルダごと)。
+- ビルドは、インストーラーと同じ 1 回で済むので、`-Zip` を付けても、時間はほとんど増えません。
+- zip は、`SHA256SUMS.txt` にも載ります。
 
 ### スクリプトが実行できないとき
 
