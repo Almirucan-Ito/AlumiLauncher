@@ -2,8 +2,10 @@ import { describe, expect, it } from "vitest";
 import {
   COLS,
   CELL_SIDE,
+  CELL_WIDTH,
   GAP,
   cellSide,
+  cellWidth,
   cellsWith,
   colAtX,
   findSlot,
@@ -99,17 +101,30 @@ describe("cellsWith", () => {
   });
 });
 
-describe("マス(正方形)の大きさ", () => {
-  it("ふだんは固定(広いウィンドウでも、アイコンの大きさの設定でも、変わらない)", () => {
+describe("マスの大きさ(高さは固定、横幅は広がる)", () => {
+  it("高さは、ふだん固定(広いウィンドウでも、アイコンの大きさの設定でも、変わらない)", () => {
     expect(cellSide(2000)).toBe(CELL_SIDE);
     expect(cellSide(600)).toBe(CELL_SIDE);
     expect(cellSide(COLS * CELL_SIDE + (COLS - 1) * GAP)).toBe(CELL_SIDE);
   });
-  it("7 マスが収まらない狭い欄では、収まる大きさまで縮む(すきまを引いて、7 で割る)", () => {
+  it("7 マスが収まらない狭い欄では、高さも、収まる大きさまで縮む(すきまを引いて、7 で割る)", () => {
     expect(cellSide(284)).toBe(Math.floor((284 - (COLS - 1) * GAP) / COLS));
   });
   it("とても狭くても、下限(12px)は守る", () => {
     expect(cellSide(50)).toBe(12);
+    expect(cellWidth(50)).toBe(12);
+  });
+  it("横幅は、広い欄では上限(CELL_WIDTH)まで広がり、高さより広くなる", () => {
+    expect(cellWidth(2000)).toBe(CELL_WIDTH);
+    expect(cellWidth(600)).toBe(CELL_WIDTH);
+    expect(CELL_WIDTH).toBeGreaterThan(CELL_SIDE);
+    expect(cellWidth(COLS * CELL_WIDTH + (COLS - 1) * GAP)).toBe(CELL_WIDTH);
+  });
+  it("横幅は、狭い欄では、収まる大きさまで縮む", () => {
+    expect(cellWidth(400)).toBe(Math.floor((400 - (COLS - 1) * GAP) / COLS));
+  });
+  it("横幅が高さ以下に縮んだら、高さも同じになる(正方形)", () => {
+    expect(cellSide(284)).toBe(cellWidth(284));
   });
 });
 

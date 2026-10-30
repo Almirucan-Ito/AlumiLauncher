@@ -4,7 +4,7 @@ import { widgetPlugins } from "../plugins/PluginRegistry";
 
 /**
  * ウィジェットを並べる欄(上のヘッダー / 下のフッター)。
- * ヘッダー・フッターは、横に 7 マスに区切られている(左から 1〜7、中心は 4)。マスは、アイコンと同じ**正方形**。
+ * ヘッダー・フッターは、横に 7 マスに区切られている(左から 1〜7、中心は 4)。マスの高さは固定(44px)、横幅は、広いウィンドウでは 72px まで広がる(7 マス全体で約 530px)。
  * ウィジェットは、開始のマス(col)と幅(span = マスの数)で置き、重ならない。高さも、マスの数(rows)で決まる。
  */
 export type BarId = "header" | "footer";
@@ -28,23 +28,34 @@ export const GAP = 4;
 /** マスの 1 辺の下限(px)。ウィンドウがとても狭くても、これより小さくはしない。 */
 const MIN_SIDE = 12;
 
-/** マスの 1 辺(px)。**固定**で、設定のアイコンの大きさや、ウィンドウの大きさでは、変わらない。 */
+/** マスの高さ(px)。**固定**で、設定のアイコンの大きさや、ウィンドウの大きさでは、変わらない(ウィジェットの高さ 1・2・3 マス = 44・92・140px は、この値で決まる)。 */
 export const CELL_SIDE = 44;
+/** マスの横幅(px)の上限。広いウィンドウでは、マスは、高さ(`CELL_SIDE`)より横に広くなり、欄の横幅は、7 マス全体で約 530px になる。 */
+export const CELL_WIDTH = 72;
 
 /**
- * マスの 1 辺(px)を求める。ふだんは固定(`CELL_SIDE`)。ウィンドウが狭くて、7 マスが収まらないときだけ、収まる大きさまで縮める。
+ * マスの横幅(px)を求める。ふだんは上限(`CELL_WIDTH`)。ウィンドウが狭くて、7 マスが収まらないときだけ、収まる大きさまで縮める。
  * @param contentWidth 欄の幅(余白を除く)
- * @returns 1 辺(px、整数)
+ * @returns 横幅(px、整数)
+ */
+export function cellWidth(contentWidth: number): number {
+  const fit = Math.floor((contentWidth - (COLS - 1) * GAP) / COLS);
+  return Math.max(MIN_SIDE, Math.min(fit, CELL_WIDTH));
+}
+
+/**
+ * マスの高さ(px)を求める。ふだんは固定(`CELL_SIDE`)。ウィンドウが狭くて、マスの横幅が高さより小さくなったときは、横幅に合わせて縮める(正方形になる)。
+ * @param contentWidth 欄の幅(余白を除く)
+ * @returns 高さ(px、整数)
  */
 export function cellSide(contentWidth: number): number {
-  const fit = Math.floor((contentWidth - (COLS - 1) * GAP) / COLS);
-  return Math.max(MIN_SIDE, Math.min(fit, CELL_SIDE));
+  return Math.min(cellWidth(contentWidth), CELL_SIDE);
 }
 
 /**
  * 縦に `rows` マスぶんの高さ(px)。マスの間のすきまも含む。
  * @param rows 縦のマスの数
- * @param side マスの 1 辺
+ * @param side マスの高さ(`cellSide` の値)
  */
 export const rowsToPx = (rows: number, side: number) => rows * side + (rows - 1) * GAP;
 
@@ -70,13 +81,13 @@ export function rowsFor(wanted: number | undefined): number {
  * @param x 画面の x 座標
  * @param contentLeft 欄の内側の左端(余白を除く)
  * @param contentWidth 欄の内側の幅
- * @param side マスの 1 辺
+ * @param colWidth マスの横幅(`cellWidth` の値)
  * @returns マス(1〜7)。欄の外でも、いちばん近いマス
  */
-export function colAtX(x: number, contentLeft: number, contentWidth: number, side: number): number {
-  const total = COLS * side + (COLS - 1) * GAP;
+export function colAtX(x: number, contentLeft: number, contentWidth: number, colWidth: number): number {
+  const total = COLS * colWidth + (COLS - 1) * GAP;
   const start = contentLeft + (contentWidth - total) / 2;
-  return clamp(Math.floor((x - start) / (side + GAP)) + 1, 1, COLS);
+  return clamp(Math.floor((x - start) / (colWidth + GAP)) + 1, 1, COLS);
 }
 
 /** 追加ウィジェットの標準の幅を決めるときの、1 マスの目安(px)。`widget.json` の `width` から、マスの数へ換算する。 */

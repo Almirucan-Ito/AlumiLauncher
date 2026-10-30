@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { widgetConsentKey, widgetKey, widgetLabel, widgetUrl, type ModWidget } from "../../shared/api/ApiModel";
-import { COLS, cellSide, colAtX, rowsFor, rowsToPx, type BarId, type Placement } from "./LayoutModel";
+import { COLS, cellSide, cellWidth, colAtX, rowsFor, rowsToPx, type BarId, type Placement } from "./LayoutModel";
 import { widgetPlugins } from "../plugins/PluginRegistry";
 import type { WidgetEnv } from "../plugins/PluginModel";
 import { t } from "../../shared/i18n/i18n";
@@ -52,8 +52,8 @@ export function locateInBars(x: number, y: number): { bar: BarId; col: number } 
     if (x < r.left || x > r.right || y < r.top || y > r.bottom) continue;
     const cs = getComputedStyle(el);
     const [pl, pr] = [parseFloat(cs.paddingLeft) || 0, parseFloat(cs.paddingRight) || 0];
-    const side = parseFloat(el.dataset.side ?? "") || cellSide(r.width - pl - pr);
-    const col = colAtX(x, r.left + pl, r.width - pl - pr, side);
+    const colWidth = parseFloat(el.dataset.colWidth ?? "") || cellWidth(r.width - pl - pr);
+    const col = colAtX(x, r.left + pl, r.width - pl - pr, colWidth);
     return { bar: el.classList.contains("wbar-header") ? "header" : "footer", col };
   }
   return null;
@@ -121,7 +121,7 @@ export function WidgetBar({
   onPreview: (id: string, x: number, y: number) => void;
 }) {
   const [drag, setDrag] = useState<Drag | null>(null);
-  // マス(正方形)の大きさ: 欄の幅から決める(広いウィンドウでは、アイコンの大きさまで)
+  // マスの大きさ: 欄の幅から決める。高さは固定(狭いときだけ縮む)、横幅は、広いウィンドウでは上限(CELL_WIDTH)まで広がる
   const barRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
   useEffect(() => {
@@ -131,7 +131,9 @@ export function WidgetBar({
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
-  const side = cellSide(width > 0 ? width : COLS * 30 + (COLS - 1) * 4);
+  const measured = width > 0 ? width : COLS * 30 + (COLS - 1) * 4;
+  const side = cellSide(measured);
+  const colWidth = cellWidth(measured);
   const nRows = rowsFor(rows);
   const height = rowsToPx(nRows, side);
   // 移動の途中で欄が消えても(ウィンドウが小さくなったときなど)、「動かし中」の状態を残さない
@@ -215,8 +217,8 @@ export function WidgetBar({
     <div
       ref={barRef}
       className={`wbar wbar-${bar}${drag ? " dragging" : ""}${drag?.over === bar ? " over" : ""}`}
-      data-side={side}
-      style={{ "--wcell": `${side}px` } as React.CSSProperties}
+      data-col-width={colWidth}
+      style={{ "--wcell": `${side}px`, "--wcol": `${colWidth}px` } as React.CSSProperties}
       role="region"
       aria-label={t(bar === "header" ? "widgetHeader" : "widgetFooter")}
       data-tauri-drag-region
@@ -225,7 +227,7 @@ export function WidgetBar({
         onBarMenu(bar, e.clientX, e.clientY);
       }}
     >
-      {/* 動かしている間の、マスの目印: 横 7 マス × 欄の高さのぶん。1 マスは、いつも正方形(横も縦も、同じ --wcell) */}
+      {/* 動かしている間の、マスの目印: 横 7 マス × 欄の高さのぶん。1 マスは、横が --wcol、縦が --wcell */}
       {drag &&
         Array.from({ length: COLS * nRows }, (_, i) => (
           <div
