@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { api, type StartApp } from "../../shared/api/ApiModel";
 import { t } from "../../shared/i18n/i18n";
+import { useLatest } from "../../shared/lib/useLatest";
 
 /**
  * 「スタートメニューから追加」の画面。スタートメニューのアプリ(通常のアプリ・ストアアプリ)の一覧から選ぶと、そのショートカットを、ホームに複製して追加する(元のアプリ・スタートメニューは、そのまま)。
@@ -22,6 +23,8 @@ export function StartAppPicker({
   const [query, setQuery] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
 
+  // 開いたときに、一度だけ読む(失敗の通知は、そのときの最新の関数で行う)
+  const onErrorRef = useLatest(onError);
   useEffect(() => {
     let live = true;
     api
@@ -30,14 +33,12 @@ export function StartAppPicker({
       .catch((e) => {
         if (!live) return;
         setApps([]);
-        onError(String(e));
+        onErrorRef.current(String(e));
       });
     return () => {
       live = false;
     };
-    // 開いたときに、一度だけ読む
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [onErrorRef]);
 
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase();

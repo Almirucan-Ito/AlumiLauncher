@@ -2,6 +2,7 @@ import { useCallback, useMemo, type Dispatch, type MutableRefObject, type SetSta
 import { api, type Config, type FolderEntry, type Item, type Settings } from "../../shared/api/ApiModel";
 import { TUNING } from "../../shared/api/TuningModel";
 import { t } from "../../shared/i18n/i18n";
+import { useLatest } from "../../shared/lib/useLatest";
 import { AppTile } from "../../shared/ui/AppTile";
 import { type MenuAction } from "../../shared/ui/MenuModel";
 import { Pager, type PagerLayout } from "../../shared/ui/Pager";
@@ -91,7 +92,6 @@ export function HomeScreen({
     resetHandover,
   } = handover;
   const { onFolderTileMenu, onOpenFolderMenu, onItemMenu, onHomeMenu } = useHomeMenus({
-    config,
     actions,
     showMenu,
     setRenaming,
@@ -100,15 +100,13 @@ export function HomeScreen({
   // ホームのアイコン・フォルダを、ウィジェットの上へドラッグして落とす(ショートカットウィジェットなど。機能は modules/widgets)
   const widgetDrop = useWidgetDrop({ configRef, entriesRef });
 
-  const renderEntries = useMemo<HomeEntry[]>(
-    () => {
-      // 検索中は、見つかったものだけを並べる(並べ替え・持ち込みはしない)
-      const list = q ? entries.filter(entryMatches) : entries;
-      return homeSlot === null || q ? list : [...list.slice(0, homeSlot), { kind: "slot" }, ...list.slice(homeSlot)];
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [entries, homeSlot, q],
-  );
+  // `entryMatches` は毎回作り直されるので、探す文字(`q`)が変わったときだけ絞り込み直す(最新の `entryMatches` を、参照から使う)
+  const entryMatchesRef = useLatest(entryMatches);
+  const renderEntries = useMemo<HomeEntry[]>(() => {
+    // 検索中は、見つかったものだけを並べる(並べ替え・持ち込みはしない)
+    const list = q ? entries.filter(entryMatchesRef.current) : entries;
+    return homeSlot === null || q ? list : [...list.slice(0, homeSlot), { kind: "slot" }, ...list.slice(homeSlot)];
+  }, [entries, homeSlot, q, entryMatchesRef]);
 
   /**
    * フォルダを開く。

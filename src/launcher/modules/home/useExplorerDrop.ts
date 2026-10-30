@@ -1,6 +1,7 @@
 import { useEffect, type MutableRefObject } from "react";
 import { api, type Config, type FolderEntry } from "../../shared/api/ApiModel";
 import { t } from "../../shared/i18n/i18n";
+import { useLatest } from "../../shared/lib/useLatest";
 import { type Origin } from "../folders/FolderModel";
 
 /**
@@ -36,12 +37,15 @@ export function useExplorerDrop({
   setLauncherPath: (path: string) => void;
   bumpFolder: (path: string) => void;
 }) {
+  // 受け取りの登録は一度だけ行い、落とされたときに、その時点の最新の関数を使う
+  const fnsRef = useLatest({ flash, addPaths, addFolder, refreshMods, refreshMinis, setLauncherPath, bumpFolder });
   useEffect(() => {
     let off: (() => void) | undefined;
     let dead = false;
     api
       .onDrop(async (e) => {
         if (e.type !== "drop") return; // ドラッグ中の表示は出さない(ドロップされたときだけ処理する)
+        const { flash, addPaths, addFolder, refreshMods, refreshMinis, setLauncherPath, bumpFolder } = fnsRef.current;
         const { open, config } = stateRef.current;
         try {
           const dirs = await api.filterDirs(e.paths);
@@ -88,7 +92,5 @@ export function useExplorerDrop({
       dead = true;
       off?.();
     };
-    // addFolder は毎回作り直されるが、中で使う値は ref/安定した関数だけなので購読し直さない
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [flash, addPaths]);
+  }, [stateRef, fnsRef]);
 }
