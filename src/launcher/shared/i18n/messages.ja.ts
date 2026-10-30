@@ -32,7 +32,7 @@ export const ja = {
 
   // 右クリックメニュー・確認
   renameFolder: "名前を変更",
-  removeFolder: "「{name}」を一覧から削除",
+  removeFolder: "「{name}」を一覧から外す",
   openInExplorer: "エクスプローラーで開く",
   revealItem: "ファイルの場所を開く",
   openThisFolder: "フォルダをエクスプローラーで開く",
@@ -50,7 +50,7 @@ export const ja = {
   sizeL: "大",
   width: "幅",
   height: "高さ",
-  useCurrent: "現在のサイズを既定にする",
+  useCurrent: "現在のサイズをデフォルトにする",
   sizeHint: "端をドラッグしてもサイズを変えられます(最小 {w}×{h})",
   homeLayoutTitle: "ホームの表示数",
   modalLayoutTitle: "フォルダ内の表示数",
@@ -105,7 +105,7 @@ export const ja = {
   hotkeyToggle: "ショートカットで開く",
   hotkeyKeys: "ショートカット",
   hotkeyPress: "キーを押してください(Esc で中止)",
-  hotkeyInvalid: "Ctrl / Alt / Shift のどれかから始めて、2〜3キーで指定してください(例: Ctrl+Space)",
+  hotkeyInvalid: "Ctrl / Alt / Shift のどれかから始めて、2〜3 キーで指定してください(例: Ctrl+Space)",
   hotkeyFailed: "このショートカットは他のアプリ(PowerToys Run など)が使用中のため登録できませんでした",
   hotkeySaved: "ショートカットを {combo} にしました",
   resetSettings: "デフォルト値にする",
@@ -133,7 +133,7 @@ export const ja = {
   widgetHeader: "ヘッダー",
   widgetFooter: "フッター",
   widgetsHint:
-    "ヘッダー・フッターは、ウィンドウが小さいときは表示されません。一覧の行をヘッダー・フッターへドラッグして追加できます。ウィジェットは、長押しして動かすと移動、右クリックで大きさ(幅・高さ)の変更・反対側への移動・外すができます",
+    "ヘッダー・フッターは、ウィンドウが小さいときは表示されません。一覧の行をヘッダー・フッターへドラッグして追加できます。ウィジェットは、長押しして動かすと移動、右クリックでサイズ(幅・高さ)の変更・反対側への移動・外すができます",
   volumeTitle: "音量",
   volumeAll: "全体の音量",
   volumeHint:
@@ -186,7 +186,7 @@ export const ja = {
   startPickerHint:
     "選んだアプリのショートカットを、ホームに追加します(スタートメニューの元のアプリは、そのままです)。通常のアプリも、ストアアプリも選べます。",
   widgetFromApp: "ミニアプリ「{a}」のウィジェット",
-  widgetSize: "大きさ: {n} マス",
+  widgetSize: "サイズ: {n} マス",
   widgetNoRoom: "置ける場所がありません(幅を小さくするか、ほかのウィジェットを動かしてください)",
   widgetHeightSmall: "高さ: 小(1 マス)",
   widgetHeightAuto: "高さ: 標準(2 マス)",

@@ -1,7 +1,7 @@
 {
   "name": "ミュージック",
   "name_en": "Music",
-  "description": "パソコンの音楽ファイルを再生します(閉じても再生は続き、ウィジェットで操作できます)",
+  "description": "PC の音楽ファイルを再生します(閉じても再生は続き、ウィジェットで操作できます)",
   "description_en": "Plays the music files on your PC (keeps playing after you close it; control it from the widget)",
   "entry": "view/index.html",
   "icon": "icon.svg",
