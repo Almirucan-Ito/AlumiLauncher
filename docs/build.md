@@ -11,7 +11,6 @@ AlumiLauncher を、配布できる形(インストーラー・ポータブル�
 | `AlumiLauncher_Setup.exe`         | インストーラー(通常版。約 3.5MB)。WebView2 が無い PC でだけ、インストール中に Microsoft から取得する | `.\scripts\release.ps1`          |
 | `AlumiLauncher_Portable.zip`      | ポータブル版(インストール不要。解凍して使う。データは、フォルダ内の `data` に保存)                   | `.\scripts\release.ps1 -Zip`     |
 | `AlumiLauncher_Setup_Offline.exe` | オフライン版(約 210MB)。WebView2 を同梱するので、インストール中も通信しない                          | `.\scripts\release.ps1 -Offline` |
-| `SHA256SUMS.txt`                  | 上のファイルのチェックサム(改ざん・破損の確認用)。自動で作られる                                     | (自動)                           |
 
 作ったものは、リポジトリ直下の `release\` に集まります(`.gitignore` 済みで、Git には入りません)。
 
@@ -106,7 +105,6 @@ ls package.json   # 見つかれば、リポジトリ直下です
 
 - 使う人は、zip を解凍して、`AlumiLauncher.exe` を起動するだけです(インストール不要・削除はフォルダごと)。
 - ビルドは、インストーラーと同じ 1 回で済むので、`-Zip` を付けても、時間はほとんど増えません。
-- zip は、`SHA256SUMS.txt` にも載ります。
 
 ### スクリプトが実行できないとき
 
@@ -118,17 +116,8 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 
 ## 4. できたものを確認する
 
-1. チェックサムを確かめます。
-
-   ```powershell
-   Get-FileHash .\release\AlumiLauncher_Setup.exe -Algorithm SHA256
-   Get-Content .\release\SHA256SUMS.txt
-   ```
-
-   2 つの値が、同じなら正常です。
-
-2. **実機で動かします。** インストーラーを実行して、起動できること、ホームの表示、ドラッグ、設定の保存を確かめます。確認する項目は、[manual-test.md](manual-test.md) にあります。
-3. ポータブル版は、zip を別の場所に解凍して、`AlumiLauncher.exe` が起動することを確かめます。インストール版が動いていると、二重起動の防止で、すぐ閉じます(先にトレイから終了してください)。
+1. **実機で動かします。** インストーラーを実行して、起動できること、ホームの表示、ドラッグ、設定の保存を確かめます。確認する項目は、[manual-test.md](manual-test.md) にあります。
+2. ポータブル版は、zip を別の場所に解凍して、`AlumiLauncher.exe` が起動することを確かめます。インストール版が動いていると、二重起動の防止で、すぐ閉じます(先にトレイから終了してください)。
 
 ## 5. 配布する(GitHub Releases)
 
@@ -136,7 +125,7 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 
 1. `main` に、取り込み済みであること(`develop` から `main` への Pull Request)。
 2. `vX.Y.Z` のタグを打つ。
-3. GitHub の Releases で、`AlumiLauncher_Setup.exe`・`AlumiLauncher_Portable.zip`・`SHA256SUMS.txt` を添える。
+3. GitHub の Releases で、`AlumiLauncher_Setup.exe`・`AlumiLauncher_Portable.zip` を添える。
 4. リリースのメモに、`CHANGELOG.md` の該当部分と、SmartScreen の案内を書く。
 
 コード署名はしていないので、初めて実行すると、Windows SmartScreen の警告が出ます(「詳細情報」→「実行」)。署名を付けるときの設定は、`scripts\release.ps1` の冒頭のコメントにあります。

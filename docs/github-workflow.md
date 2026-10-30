@@ -101,7 +101,7 @@ develop ──────────────────PR→ main        
   3. [manual-test.md](manual-test.md) を、実機で通す
   4. `npm run licenses`(依存が変わったとき)、`CHANGELOG.md` を更新する
   5. `.\scripts\release.ps1 -Zip` で、配布物を作る
-  6. `vX.Y.Z` のタグを打って、**GitHub Releases** に、`AlumiLauncher_Setup.exe`・`AlumiLauncher_Portable.zip`・`SHA256SUMS.txt` を添える
+  6. `vX.Y.Z` のタグを打って、**GitHub Releases** に、`AlumiLauncher_Setup.exe`・`AlumiLauncher_Portable.zip` を添える
   7. リリースのメモに、`CHANGELOG.md` の該当部分と、SmartScreen の案内(署名が無い間)を書く
 
 ## 7. セキュリティ・依存ライブラリ

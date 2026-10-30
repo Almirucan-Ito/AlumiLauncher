@@ -42,7 +42,7 @@ VS Code を使う場合は、フォルダを開くと「おすすめの拡張機
 | インストーラーと、ポータブル版の zip を作る(Windows)    | `.\scripts\release.ps1 -Zip`                   |
 | インストーラーと、オフライン版を作る(Windows)           | `.\scripts\release.ps1 -Offline`               |
 
-作ったものは、`release\` に集まります(`AlumiLauncher_Setup.exe`・`AlumiLauncher_Portable.zip`・`AlumiLauncher_Setup_Offline.exe`・`SHA256SUMS.txt`)。配布するとき(GitHub の Releases に載せるとき)は、`-Zip` を付けて、インストーラーと zip の両方を作ります。詳しくは [docs/build.md](docs/build.md) を見てください。
+作ったものは、`release\` に集まります(`AlumiLauncher_Setup.exe`・`AlumiLauncher_Portable.zip`・`AlumiLauncher_Setup_Offline.exe`)。配布するとき(GitHub の Releases に載せるとき)は、`-Zip` を付けて、インストーラーと zip の両方を作ります。詳しくは [docs/build.md](docs/build.md) を見てください。
 
 `npm run check` は、`tsc`(型)、ESLint、Prettier、ミニアプリ・ウィジェットの検査(`check:miniapps`。JSON・ファイルの有無・JavaScript の文法)、その JavaScript の名前の書き間違いの検査(`check:js`)、画面のテスト(Vitest)を実行します。依存ライブラリ(`package.json`・`Cargo.toml`)を足す・更新したら、`npm run licenses` で `THIRD_PARTY_LICENSES.md` を作り直してください(Rust のソースを取得してある環境で実行します)。画面のテストには、axe-core でアクセシビリティを調べるもの(`src/launcher/App.a11y.test.tsx`。ホーム・設定・フォルダ・「＋」のメニュー)も入っています。ボタンにラベルが無い、ダイアログに `role="dialog"` が無い、などは、ここで見つかります(色のコントラストは、jsdom では計算できないので、対象外です)。新しい画面を足したら、このテストにも足してください。Rust は別に `cargo fmt --check` と `cargo clippy -- -D warnings` を通してください。
 
