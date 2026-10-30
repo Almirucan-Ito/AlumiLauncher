@@ -1,0 +1,101 @@
+name: Release
+
+# リリースを自動で作る。
+#   ・`vX.Y.Z` のタグを GitHub に送る → ビルドして、Releases に「下書き」で載せる(中身を確かめてから、公開する)
+#   ・「Actions」タブから、手で実行する(workflow_dispatch) → ビルドだけして、できたファイルを「Artifacts」に置く(試し用。Releases には載せない)
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      # Rust は、rust-toolchain.toml の版を使う
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          workspaces: src-tauri
+      - run: npm ci
+
+      # タグの版と、3 か所のバージョン(package.json・Cargo.toml・tauri.conf.json)が、そろっているか確かめる(そろっていないと、違う版のインストーラーができてしまう)
+      - name: バージョンの確認
+        if: github.ref_type == 'tag'
+        shell: pwsh
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          $want = $env:TAG.TrimStart("v")
+          $found = [ordered]@{
+            "package.json"              = (Get-Content package.json -Raw | ConvertFrom-Json).version
+            "src-tauri/tauri.conf.json" = (Get-Content src-tauri/tauri.conf.json -Raw | ConvertFrom-Json).version
+            "src-tauri/Cargo.toml"      = (Select-String -Path src-tauri/Cargo.toml -Pattern '^version\s*=\s*"(.+)"' | Select-Object -First 1).Matches.Groups[1].Value
+          }
+          $bad = $found.GetEnumerator() | Where-Object { $_.Value -ne $want }
+          foreach ($f in $found.GetEnumerator()) { Write-Host ("{0,-28} {1}" -f $f.Key, $f.Value) }
+          if ($bad) { throw "タグ ($($env:TAG)) と、バージョンが違うファイルがあります。3 か所を、そろえてください。" }
+
+      # ビルドの前に、検査とテストを通す(失敗したら、ここで止まる)
+      - run: npm run check
+      - run: cargo test
+        working-directory: src-tauri
+
+      # インストーラーと、ポータブル版の zip を作る(手元の `.\scripts\release.ps1 -Zip` と同じ)
+      - name: ビルド
+        shell: pwsh
+        run: ./scripts/release.ps1 -Zip
+
+      # 試し用: Releases には載せず、できたファイルを Artifacts に置く
+      - uses: actions/upload-artifact@v4
+        if: github.ref_type != 'tag'
+        with:
+          name: AlumiLauncher-release
+          path: |
+            release/AlumiLauncher_Setup.exe
+            release/AlumiLauncher_Portable.zip
+          if-no-files-found: error
+
+      # リリースのメモ: CHANGELOG.md の、この版の部分(無ければ「未リリース」の部分)に、SmartScreen の案内を足す
+      - name: リリースのメモを作る
+        if: github.ref_type == 'tag'
+        shell: pwsh
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          $ver = $env:TAG.TrimStart("v")
+          $text = Get-Content CHANGELOG.md -Raw -Encoding UTF8
+          $section = ""
+          foreach ($name in @($ver, "Unreleased")) {
+            $m = [regex]::Match($text, "(?ms)^## \[$([regex]::Escape($name))\][^\r\n]*\r?\n(.*?)(?=^## \[|\z)")
+            if ($m.Success -and $m.Groups[1].Value.Trim()) { $section = $m.Groups[1].Value.Trim(); break }
+          }
+          if (-not $section) { $section = "変更の内容は、CHANGELOG.md を見てください。" }
+          $notes = @"
+          $section
+
+          ---
+
+          インストーラーにはコード署名がないため、初めて実行すると「Windows によって PC が保護されました」と出ることがあります。「詳細情報」→「実行」で続行できます。
+          インストール不要で使うときは、``AlumiLauncher_Portable.zip`` を解凍して、``AlumiLauncher.exe`` を起動してください。
+          "@
+          [IO.File]::WriteAllText("release-notes.md", $notes, (New-Object Text.UTF8Encoding $false))
+
+      # Releases に、「下書き」で載せる(Releases のページで、中身を確かめて、「Publish release」を押すと公開される)
+      - name: Releases に載せる(下書き)
+        if: github.ref_type == 'tag'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release create $env:TAG release/AlumiLauncher_Setup.exe release/AlumiLauncher_Portable.zip --title $env:TAG --notes-file release-notes.md --draft --verify-tag
+          if ($LASTEXITCODE -ne 0) { throw "Releases への登録に失敗しました" }

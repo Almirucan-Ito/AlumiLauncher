@@ -100,9 +100,19 @@ develop ──────────────────PR→ main        
   2. バージョンを上げる(`package.json`・`src-tauri/Cargo.toml`・`src-tauri/tauri.conf.json` の 3 か所)
   3. [manual-test.md](manual-test.md) を、実機で通す
   4. `npm run licenses`(依存が変わったとき)、`CHANGELOG.md` を更新する
-  5. `.\scripts\release.ps1 -Zip` で、配布物を作る
-  6. `vX.Y.Z` のタグを打って、**GitHub Releases** に、`AlumiLauncher_Setup.exe`・`AlumiLauncher_Portable.zip` を添える
-  7. リリースのメモに、`CHANGELOG.md` の該当部分と、SmartScreen の案内(署名が無い間)を書く
+  5. `vX.Y.Z` のタグを打って、GitHub に送る(`main` の最新に打つ。タグは、手順 2 のバージョンと同じにする)
+
+     ```bash
+     git tag vX.Y.Z
+     git push origin vX.Y.Z
+     ```
+
+  6. **あとは、自動です**(`.github/workflows/release.yml`)。GitHub の Windows のサーバーが、検査・テスト・ビルド(`.\scripts\release.ps1 -Zip` と同じ)をして、`AlumiLauncher_Setup.exe` と `AlumiLauncher_Portable.zip` を、**下書き**の Release として載せます。リリースのメモは、`CHANGELOG.md` の、その版の部分に、SmartScreen の案内を足したものが、自動で入ります。
+  7. GitHub の Releases で、下書きの中身(メモ・ファイル)を確かめて、**「Publish release」** を押すと、公開されます。
+  - タグの版と、3 か所のバージョンが、違うときは、ビルドの前に止まります(違う版のインストーラーを作らないため)。
+  - タグを打たずに試すときは、GitHub の「Actions」タブ → 「Release」→ 「Run workflow」を押します。ビルドだけして、できたファイルを「Artifacts」に置きます(Releases には載せません)。
+  - 失敗したときは、Actions のログを見て、直してから、タグを打ち直します(`git tag -d vX.Y.Z` と `git push origin :refs/tags/vX.Y.Z` で、タグを消せます)。
+  - 手元でビルドして、手で載せることも、できます([build.md](build.md))。
 
 ## 7. セキュリティ・依存ライブラリ
 
@@ -125,5 +135,4 @@ develop ──────────────────PR→ main        
 ## 9. 将来の課題
 
 - コード署名(SmartScreen の警告をなくす。証明書が必要)
-- リリースの自動化(タグを打つと、Actions が、ビルドして Releases に添える)
 - 自動更新(いまは、利用者が、新しいインストーラーを入れ直す)

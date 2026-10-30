@@ -124,9 +124,11 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 リリースの流れは、[github-workflow.md](github-workflow.md) の「バージョンとリリース」にあります。要点は、次のとおりです。
 
 1. `main` に、取り込み済みであること(`develop` から `main` への Pull Request)。
-2. `vX.Y.Z` のタグを打つ。
-3. GitHub の Releases で、`AlumiLauncher_Setup.exe`・`AlumiLauncher_Portable.zip` を添える。
-4. リリースのメモに、`CHANGELOG.md` の該当部分と、SmartScreen の案内を書く。
+2. `vX.Y.Z` のタグを打って、GitHub に送る(`git tag vX.Y.Z` → `git push origin vX.Y.Z`)。
+3. **あとは、自動です**(`.github/workflows/release.yml`)。GitHub のサーバーが、ビルドして、`AlumiLauncher_Setup.exe` と `AlumiLauncher_Portable.zip` を、下書きの Release として載せます。メモも、`CHANGELOG.md` から、自動で作られます。
+4. Releases のページで、下書きの中身を確かめて、「Publish release」を押すと、公開されます。
+
+手でビルドして載せるときは、この節の上の手順(`.\scripts\release.ps1 -Zip`)で作って、Releases に、2 つのファイルを添えます。
 
 コード署名はしていないので、初めて実行すると、Windows SmartScreen の警告が出ます(「詳細情報」→「実行」)。署名を付けるときの設定は、`scripts\release.ps1` の冒頭のコメントにあります。
 
