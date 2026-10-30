@@ -32,7 +32,16 @@ winget install Rustlang.Rustup
 winget install Microsoft.VisualStudio.2022.BuildTools --override "--add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
 ```
 
-入れたあと、PowerShell を開き直します。
+入れたあと、PowerShell を開き直して、入っているか確認します。
+
+```powershell
+node -v      # v22 以上(.nvmrc は 24)
+npm -v
+git --version
+rustup show  # フォルダの中で実行すると、rust-toolchain.toml の版が入る
+```
+
+`rustup show` は、初回に、指定の版のダウンロードが始まります(数分)。Visual Studio Build Tools が入っているかは、`cargo build` が `link.exe` を見つけられるかで分かります(見つからないときは、「5. 困ったとき」を見てください)。
 
 ## 3. 動かす
 
@@ -42,7 +51,7 @@ winget install Microsoft.VisualStudio.2022.BuildTools --override "--add Microsof
 | アプリとして起動(Windows。変更が自動で反映)   | `npm run tauri dev`                                   |
 | 提出前の確認(まとめて)                        | `npm run check`                                       |
 | Rust のテスト                                 | `cd src-tauri; cargo test`                            |
-| インストーラーを作る                          | `.\scripts\release.ps1`(`-Zip` でポータブル版 zip も) |
+| インストーラーを作る([build.md](build.md))    | `.\scripts\release.ps1`(`-Zip` でポータブル版 zip も) |
 
 - 初回の `npm run tauri dev` は、Rust のビルドで数分かかります。2 回目からは速くなります。
 - すでにインストール版の AlumiLauncher が動いていると、開発中のアプリは、**二重起動を避ける仕組み**で、すぐ閉じてしまいます。先に、トレイから終了してください。
@@ -87,6 +96,7 @@ cargo clippy --target x86_64-pc-windows-msvc -- -D warnings
 
 ## 6. 次に読むもの
 
+- [build.md](build.md) … アプリのビルド方法(インストーラー・ポータブル版・オフライン版)
 - [CONTRIBUTING.md](../CONTRIBUTING.md) … どこを触るか・書き方の決まり・提出前のチェックリスト
 - [architecture.md](architecture.md) … 構造
 - [extending.md](extending.md) … ミニアプリ・ウィジェットの作り方

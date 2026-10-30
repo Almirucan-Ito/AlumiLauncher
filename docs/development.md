@@ -4,13 +4,13 @@
 
 ## ビルド
 
-必要なもの: Node.js、Rust(MSVC ツールチェーン)、Visual Studio の C++ ビルドツール。
+環境のつくり方は [setup.md](setup.md)、ビルドの詳しい手順(ビルド前の確認・バージョン・ポータブル版・オフライン版・WSL からのビルド・困ったとき)は [build.md](build.md) にあります。
 
 ```powershell
-npm install
+npm ci
 npm run tauri dev      # 開発
 npm run tauri build    # インストーラーを作成(src-tauri/target/release/bundle/nsis/)
-.\scripts\release.ps1            # 通常版+チェックサムを release/ に作成(-Offline を付けるとオフライン版も)
+.\scripts\release.ps1            # 通常版+チェックサムを release/ に作成(-Zip でポータブル版、-Offline でオフライン版も)
 ```
 
 ### コード署名(任意)
