@@ -2006,7 +2006,7 @@ dependencies = [
 name = "launcher"
 version = "1.0.0"
 dependencies = [
- "base64 0.22.1",
+ "base64 0.23.1",
  "notify",
  "png 0.17.16",
  "serde",
