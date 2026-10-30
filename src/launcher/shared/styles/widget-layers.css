@@ -1,5 +1,4 @@
 /* ウィジェットの置き場所・音楽プレーヤー・ガラスの表現など、あとから重ねた調整(前のファイルの規則を上書きするので、順番を変えない) */
-/* 音楽プレーヤーのウィジェット */
 /* ---------- ウィジェットの置き場所: ヘッダー・フッターは、横 7 マス(中心は 4)。マスの横幅は --wcol(欄の幅から決まり、広いウィンドウでは上限まで広がる)、高さは --wcell(固定) ---------- */
 .wbar {
   display: grid;
@@ -25,7 +24,6 @@
   display: grid;
   place-items: center;
   border-radius: 8px;
-  border: 1px dashed var(--stroke);
   color: var(--text-dim);
   font-size: 11px;
   pointer-events: none;
@@ -60,8 +58,6 @@
     display: none;
   }
 }
-/* 音楽プレーヤーのウィジェット: どんな背景でも見えるように、UI の色(--sheet-bg など)をそのまま使った、しっかりした面にする */
-/* 再生位置・音量: 進んだ分を、文字の色で塗る */
 /* ---------- ウィジェットを動かすときの目印 ---------- */
 /* マスの区切り(番号なし)。動かしている間だけ出る */
 .wcell {
@@ -91,10 +87,8 @@
 
 /* 高さを決めたウィジェットは、中身をその高さいっぱいに広げる(収まらないぶんは、中で動かして見る) */
 .widget.hfixed > .wcard,
-.widget.hfixed > .clock,
-.widget.hfixed > .wmod {
+.widget.hfixed > .clock {
   height: 100%;
-  overflow: auto;
 }
 .widget.hfixed > .clock {
   overflow: hidden;
@@ -110,14 +104,13 @@
 }
 .widget.hfixed > .wmod {
   height: 100% !important;
+  overflow: auto;
 }
 /* メニューは、文字がすべて入る幅にする(画面の端でも、文字が切れない) */
 .menu {
   width: max-content;
   max-width: calc(100vw - 16px);
 }
-/* ウィジェットの中のボタンは、ふれあわないように、間をあける */
-/* 音楽プレーヤーのウィジェット: 左に操作、右端に縦の音量 */
 /* フォルダのタイル(板)と、ウィジェットのカード(時計を除く)は、同じ色・同じ透過度にそろえる。
    UI の色の「透過度」(--ui-alpha)も、ここに反映する */
 .plate {
@@ -140,9 +133,7 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.18);
   backdrop-filter: blur(8px); /* 後ろの画像が、文字の邪魔にならないように */
 }
-/* ---------- 音楽プレーヤーのウィジェット(縦に並べる。音量は、右上の横向きの棒) ---------- */
-/* 幅が狭いときは、音量の棒は隠して、ミュートのボタンだけにする */
-/* 高さを広げたときは、中身を縦に均等に配る(崩れない) */
+/* 音楽プレーヤーのウィジェット: 高さを広げたときは、中身を縦に均等に配る(崩れない) */
 .widget.hfixed .wmusic {
   justify-content: space-between;
 }
@@ -175,7 +166,6 @@
 .settings {
   backdrop-filter: blur(16px) saturate(1.15);
 }
-/* ToDo ウィジェット(次にやること・今日の予定) */
 /* 一覧の、データ・キャッシュの大きさと消去 */
 .wstore {
   display: flex;
@@ -205,5 +195,3 @@
   flex: 1;
   min-width: 0;
 }
-
-/* ミュージックのウィジェット: シャッフル・リピート(右上) */

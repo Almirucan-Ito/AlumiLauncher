@@ -1,16 +1,18 @@
 /* timer ウィジェットの見た目(本体の styles.css の後に読み込まれる) */
 .wtimer {
-  width: 210px;
+  width: 100%;
+  min-width: 0;
+  justify-content: center;
 }
 
 .wtimer-modes {
   display: flex;
-  gap: 4px;
+  gap: 8px;
   margin-bottom: 6px;
 }
 
 .wmode {
-  padding: 2px 8px;
+  padding: 3px 10px;
   border-radius: 999px;
   font-size: 11px;
   color: var(--text-dim);
@@ -25,7 +27,7 @@
 .wtimer-row {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
 }
 
 .wtimer-time {
@@ -35,27 +37,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-.wtimer {
-  width: 100%;
-  min-width: 0;
-}
-
-.wtimer-modes {
-  gap: 8px;
-}
-
-.wtimer-row {
-  gap: 10px;
-}
-
-.wmode {
-  padding: 3px 10px;
-}
-
 /* 高さに合わせた中身(1 マス = 時間とボタンだけ / 2 マス以上 = 25・5・15 分の切り替えも) */
-.wtimer {
-  justify-content: center;
-}
 @container (max-height: 64px) {
   .wtimer {
     padding: 4px 10px;

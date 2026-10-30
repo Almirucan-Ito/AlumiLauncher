@@ -3,8 +3,7 @@
 .wcard {
   padding: 8px 12px;
   border-radius: 14px;
-  background: color-mix(in srgb, var(--glass) var(--ui-alpha, 100%), transparent);
-  border: 1px solid var(--stroke);
+  /* 背景と枠は、widget-layers.css で、フォルダの板と同じ色・透過度に決める */
   color: var(--text);
   font-size: 13px;
 }
