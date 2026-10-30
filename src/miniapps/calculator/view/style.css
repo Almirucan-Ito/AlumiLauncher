@@ -1,0 +1,211 @@
+/* ---- 色: ランチャーの色(theme)が届くと、ここの変数が上書きされる ---- */
+:root {
+  --text: #f3f4f6;
+  --dim: rgba(243, 244, 246, 0.6);
+  --bg: rgb(76, 78, 88);
+  --field: rgba(255, 255, 255, 0.1);
+  --stroke: rgba(255, 255, 255, 0.16);
+  --accent: #2f6bff;
+  --danger: #ff6b6b;
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI Variable Text", "Segoe UI", "Yu Gothic UI", sans-serif;
+  font-size: 14px;
+}
+button {
+  font: inherit;
+  color: inherit;
+  border: 0;
+  background: var(--field);
+  border-radius: 14px;
+  cursor: pointer;
+  transition:
+    background 0.12s,
+    transform 0.08s;
+}
+button:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+button:active {
+  transform: scale(0.96);
+}
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.dim {
+  color: var(--dim);
+}
+.grow {
+  flex: 1;
+}
+
+.wrap {
+  position: relative;
+  height: 100%;
+  min-height: 520px;
+  max-width: 440px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 14px 14px;
+  gap: 10px;
+}
+
+/* ---- 表示 ---- */
+.screen {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 12px 10px;
+  border-radius: 16px;
+  background: var(--field);
+  min-height: 118px;
+}
+.tools {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+}
+.tool {
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  color: var(--dim);
+  background: transparent;
+}
+.mem {
+  align-self: center;
+  padding: 0 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+}
+.mem[hidden] {
+  display: none;
+}
+.line1 {
+  min-height: 24px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  text-align: right;
+  font-size: 18px;
+  color: var(--dim);
+  scrollbar-width: none;
+}
+.line1::-webkit-scrollbar {
+  display: none;
+}
+.line2 {
+  text-align: right;
+  font-size: 44px;
+  line-height: 1.15;
+  font-weight: 300;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.line2.small {
+  font-size: 32px;
+}
+.line2.tiny {
+  font-size: 22px;
+}
+.line2.err {
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--danger);
+}
+
+/* ---- キー ---- */
+.pad {
+  flex: 1 1 auto;
+  min-height: 300px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(3, minmax(26px, 0.62fr)) repeat(5, minmax(38px, 1fr));
+  gap: 8px;
+}
+.pad button {
+  min-height: 0;
+  font-size: clamp(14px, 3.4vh, 24px);
+  background: var(--field);
+}
+.pad .mem,
+.pad .sub {
+  font-size: clamp(12px, 2.6vh, 18px);
+  color: var(--dim);
+}
+.pad .zero {
+  grid-column: span 2;
+}
+.pad .fn {
+  background: rgba(255, 255, 255, 0.16);
+}
+.pad .op {
+  background: color-mix(in srgb, var(--accent) 55%, transparent);
+  color: #fff;
+}
+.pad .eq {
+  background: var(--accent);
+  color: #fff;
+}
+.pad button:hover {
+  filter: brightness(1.18);
+}
+
+/* ---- 履歴 ---- */
+.hist {
+  position: absolute;
+  inset: 8px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 16px;
+  background: var(--bg);
+  border: 1px solid var(--stroke);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+  z-index: 5;
+}
+.hist[hidden] {
+  display: none;
+}
+.hist-head {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.hist-list {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.hist-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 6px 10px;
+  border-radius: 10px;
+  text-align: right;
+}
+.hist-row strong {
+  font-size: 20px;
+  font-weight: 500;
+}
+.hist-none {
+  padding: 16px 8px;
+  text-align: center;
+}

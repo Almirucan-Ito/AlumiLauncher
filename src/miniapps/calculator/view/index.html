@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>電卓</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- ---- 画面 ---- -->
+    <div class="wrap">
+      <div class="screen">
+        <div class="tools">
+          <button id="hist-btn" class="tool" type="button">履歴</button>
+          <span id="mem" class="mem" hidden>M</span>
+        </div>
+        <div class="line1" id="line1"></div>
+        <div class="line2" id="line2" aria-live="polite"></div>
+      </div>
+
+      <div class="pad" id="pad" role="group" aria-label="電卓のキー">
+        <button type="button" data-k="MC" class="mem">MC</button>
+        <button type="button" data-k="MR" class="mem">MR</button>
+        <button type="button" data-k="M+" class="mem">M+</button>
+        <button type="button" data-k="M-" class="mem">M−</button>
+
+        <button type="button" data-k="1/x" class="sub">1/x</button>
+        <button type="button" data-k="x²" class="sub">x²</button>
+        <button type="button" data-k="√" class="sub">√</button>
+        <button type="button" data-k="¦" class="sub">mod</button>
+
+        <button type="button" data-k="%" class="sub">%</button>
+        <button type="button" data-k="()" class="sub">( )</button>
+        <button type="button" data-k="‖" class="sub">//</button>
+        <button type="button" data-k="⌫" class="sub">⌫</button>
+
+        <button type="button" data-k="CE" class="fn">CE</button>
+        <button type="button" data-k="C" class="fn">C</button>
+        <button type="button" data-k="±" class="fn">±</button>
+        <button type="button" data-k="÷" class="op">÷</button>
+
+        <button type="button" data-k="7">7</button>
+        <button type="button" data-k="8">8</button>
+        <button type="button" data-k="9">9</button>
+        <button type="button" data-k="×" class="op">×</button>
+
+        <button type="button" data-k="4">4</button>
+        <button type="button" data-k="5">5</button>
+        <button type="button" data-k="6">6</button>
+        <button type="button" data-k="−" class="op">−</button>
+
+        <button type="button" data-k="1">1</button>
+        <button type="button" data-k="2">2</button>
+        <button type="button" data-k="3">3</button>
+        <button type="button" data-k="+" class="op">+</button>
+
+        <button type="button" data-k="0" class="zero">0</button>
+        <button type="button" data-k=".">.</button>
+        <button type="button" data-k="=" class="eq">=</button>
+      </div>
+
+      <!-- 履歴(「履歴」ボタンで出す) -->
+      <div class="hist" id="hist" hidden>
+        <div class="hist-head">
+          <strong id="hist-title">履歴</strong>
+          <span class="grow"></span>
+          <button id="hist-clear" class="tool" type="button">履歴を消す</button>
+          <button id="hist-close" class="tool" type="button" aria-label="閉じる">×</button>
+        </div>
+        <div class="hist-list" id="hist-list"></div>
+      </div>
+    </div>
+    <script src="../controller/calc.js"></script>
+    <script src="../controller/main.js"></script>
+  </body>
+</html>
