@@ -8,6 +8,9 @@ use std::sync::atomic::AtomicBool;
 use std::sync::Mutex;
 use std::sync::MutexGuard;
 
+/// いま動いている見張り: 見張っているパス(中も見張るもの・直下だけ見張るもの)と、見張り本体。パスが前と同じなら、作り直さない。
+pub(crate) type Watching = (Vec<String>, Vec<String>, notify::RecommendedWatcher);
+
 /// アプリ全体で共有する状態。設定はメモリ上に持ち(画面からの保存で即時更新)、ディスクへの書き込みはまとめて遅延させる(`schedule_flush`)。
 #[derive(Default)]
 pub(crate) struct AppState {
@@ -22,10 +25,10 @@ pub(crate) struct AppState {
     pub(crate) roots: Mutex<Vec<PathBuf>>,
     /// 今登録しているショートカット(設定の `hotkey` を読んだもの)
     pub(crate) hotkey: Mutex<Option<HotkeySpec>>,
-    /// フォルダの中身の変化を見張るもの(見張っているパスの一覧と一緒に持つ)
-    pub(crate) watcher: Mutex<Option<(Vec<String>, notify::RecommendedWatcher)>>,
+    /// フォルダの中身の変化を見張るもの(見張っているパスの一覧: 中も見張るもの・直下だけ見張るもの、と一緒に持つ)
+    pub(crate) watcher: Mutex<Option<Watching>>,
     /// 見張りから、まとめ役のスレッドへ「このフォルダが変わった」と伝える口
-    pub(crate) watch_tx: Mutex<Option<std::sync::mpsc::Sender<String>>>,
+    pub(crate) watch_tx: Mutex<Option<std::sync::mpsc::Sender<crate::files::roots::WatchEvent>>>,
     /// 音楽プレーヤーに登録した音声ファイル(印 → パス)
     pub(crate) music: Mutex<music::Registry>,
 }
