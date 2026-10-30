@@ -5,7 +5,7 @@
 > **言語について**: 英語の Issue・Pull Request・コードのコメントも、歓迎します。ただし、作者は**英語を読むのが苦手**なので、英語のものへの返事は、遅れることがあり、**長いあいだ、返事ができないことも**あります。短く、はっきり(題名・何を変えたか・なぜか)書いてもらえると、助かります。日本語で、短い要約を添えてもらえると、さらに助かります。
 
 AlumiLauncher は、Windows 用の「スマートフォンのホーム画面風」ランチャーです(Tauri 2 + React / TypeScript + Rust)。
-この文書は、はじめてソースを触る人向けの手引きです。環境のつくり方は [docs/setup.md](docs/setup.md)、GitHub での進め方(Issue・Pull Request・リリース)は [docs/github-workflow.md](docs/github-workflow.md)、画面の文言の管理は [docs/i18n.md](docs/i18n.md) にあります。構造の詳しい説明は [docs/architecture.md](docs/architecture.md) にあります。
+この文書は、はじめてソースを触る人向けの手引きです。環境のつくり方は [docs/setup.md](docs/setup.md)、アプリのビルド方法は [docs/build.md](docs/build.md)、GitHub での進め方(Issue・Pull Request・リリース)は [docs/github-workflow.md](docs/github-workflow.md)、画面の文言の管理は [docs/i18n.md](docs/i18n.md) にあります。構造の詳しい説明は [docs/architecture.md](docs/architecture.md) にあります。
 
 ## 1. 環境をそろえる
 

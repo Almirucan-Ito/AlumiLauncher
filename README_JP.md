@@ -217,7 +217,7 @@ ToDo・タイマーなどの内容は、設定ファイルではなく、それ�
 
 ## 開発に参加するには
 
-はじめに [docs/setup.md](docs/setup.md)(開発環境のつくり方)、次に [CONTRIBUTING.md](CONTRIBUTING.md)(どこを触るか・書き方・チェックリスト)を読んでください。構造は [docs/architecture.md](docs/architecture.md)、ビルド・規約は [docs/development.md](docs/development.md)、画面の文言の管理は [docs/i18n.md](docs/i18n.md)、GitHub での進め方は [docs/github-workflow.md](docs/github-workflow.md) です。行動規範は [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) です。
+はじめに [docs/setup.md](docs/setup.md)(開発環境のつくり方)、ビルドは [docs/build.md](docs/build.md)(アプリのビルド方法)、次に [CONTRIBUTING.md](CONTRIBUTING.md)(どこを触るか・書き方・チェックリスト)を読んでください。構造は [docs/architecture.md](docs/architecture.md)、ビルド・規約は [docs/development.md](docs/development.md)、画面の文言の管理は [docs/i18n.md](docs/i18n.md)、GitHub での進め方は [docs/github-workflow.md](docs/github-workflow.md) です。行動規範は [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) です。
 
 ## ライセンス
 
