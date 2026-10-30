@@ -1,15 +1,18 @@
 import { useEffect, useRef, useState, type MutableRefObject } from "react";
-import { useLatest } from "../lib/useLatest";
 import { shiftDown } from "../drag/ShiftKeyController";
+import { useLatest } from "../lib/useLatest";
 import {
   CENTER_SETTLE_MS,
   CENTER_ZONE,
   EDGE_FLIP_MS,
-  EDGE_PX,
   LONG_PRESS_MS,
   MERGE_DWELL_MS,
   REORDER_DWELL_MS,
-  RIM_ZONE,
+  edgeDirectionOf,
+  hoverZoneOf,
+  reorderedItems,
+  swipePageDelta,
+  withResistance,
   type HoverZone,
 } from "./PagerModel";
 import { type PagerProps } from "./PagerProps";
@@ -183,16 +186,10 @@ export function usePagerDrag<T>({
    */
   const reorderTo = (targetId: string) => {
     if (shiftRef.current || shiftDown()) return; // Shift 中は、入れ替えない
-    const cur = itemsRef.current;
     const id = dragIdRef.current;
     if (!id || !getId || !onReorder) return;
-    const from = cur.findIndex((it) => getId(it) === id);
-    const to = cur.findIndex((it) => getId(it) === targetId);
-    if (from < 0 || to < 0 || from === to) return;
-    const next = cur.slice();
-    const [m] = next.splice(from, 1);
-    next.splice(to, 0, m);
-    onReorder(next);
+    const next = reorderedItems(itemsRef.current, getId, id, targetId);
+    if (next) onReorder(next);
   };
 
   /** ポインタが動いたとき。ドラッグ中なら、ウィンドウの外へ出たか・どのアイコンのどの位置か(中央 / 内側 / 縁)・端に寄ったか、を判定して、重ねる・入れ替え・ページ送りの待ちを仕掛ける。ドラッグ中でなければ、スワイプとして、ページを引っ張る(端では抵抗を付ける)。 */
@@ -236,10 +233,7 @@ export function usePagerDrag<T>({
         //   内側(inner)  … 入れ替え。少し止まったときだけ(通り道で入れ替わってしまわないように)
         //   縁(rim)      … 何もしない(マスの境目をかすめただけで反応しないように)
         const zoneSize = mergeZone?.(dragKey, target) ?? CENTER_ZONE;
-        const inCenter = Math.abs(hit.fx - 0.5) < zoneSize && Math.abs(hit.fy - 0.5) < zoneSize;
-        const inInner = hit.fx > RIM_ZONE && hit.fx < 1 - RIM_ZONE && hit.fy > RIM_ZONE && hit.fy < 1 - RIM_ZONE;
-        const mergeable = !!canDropOnto?.(dragKey, target);
-        const zone: HoverZone = mergeable && inCenter ? "center" : inInner ? "inner" : "rim";
+        const zone: HoverZone = hoverZoneOf(hit.fx, hit.fy, zoneSize, !!canDropOnto?.(dragKey, target));
         if (hover.current.id !== target || hover.current.zone !== zone) {
           clearHover();
           hover.current = { id: target, zone, since: Date.now() };
@@ -271,13 +265,8 @@ export function usePagerDrag<T>({
       // フォルダ内では、枠(.sheet)の左右の余白(矢印のある所)まで含めて「端」とみなす。
       // 枠の外へ出しているとき(ホームへ移すとき)は切り替えない
       const sheetRect = rootRef.current?.closest<HTMLElement>(".sheet")?.getBoundingClientRect();
-      const bandL = sheetRect ? sheetRect.left : rect.left - 20;
-      const bandR = sheetRect ? sheetRect.right : rect.right + 20;
-      const bandT = sheetRect ? sheetRect.top : rect.top;
-      const bandB = sheetRect ? sheetRect.bottom : rect.bottom;
-      const inBand = e.clientY >= bandT && e.clientY <= bandB && e.clientX >= bandL && e.clientX <= bandR;
-      const dir =
-        !inBand || frozen ? 0 : e.clientX < rect.left + EDGE_PX ? -1 : e.clientX > rect.right - EDGE_PX ? 1 : 0;
+      const band = sheetRect ?? { left: rect.left - 20, right: rect.right + 20, top: rect.top, bottom: rect.bottom };
+      const dir = edgeDirectionOf(e.clientX, e.clientY, rect, band, frozen);
       if (dir === 0) clearEdge();
       else if (edgeDir.current !== dir || edgeTimer.current === undefined) {
         // 端に寄せている間は、ポインタを動かさなくても、一定の間隔で次のページへ送り続ける
@@ -299,7 +288,7 @@ export function usePagerDrag<T>({
       press.current = null;
     }
     if (start.current === null) return;
-    let dx = e.clientX - start.current;
+    const dx = e.clientX - start.current;
     if (!moved.current && Math.abs(dx) > 8) {
       moved.current = true;
       setDragging(true);
@@ -307,8 +296,7 @@ export function usePagerDrag<T>({
     }
     if (!moved.current) return;
     // 端ではゴム紐のように抵抗を付ける
-    if ((page === 0 && dx > 0) || (page === count - 1 && dx < 0)) dx *= 0.3;
-    setDrag(dx);
+    setDrag(withResistance(dx, page, count));
   };
 
   /** ポインタを離したとき。ドラッグ中なら、呼び出し側の処理(`onDragEnd`)→ 重ねて離した処理(`onDropOnto`。相手の中へ吸い込まれるアニメーション付き)の順に、確定する。スワイプなら、60px 以上動いていればページを送る。 */
@@ -349,8 +337,8 @@ export function usePagerDrag<T>({
     const dx = e.clientX - start.current;
     start.current = null;
     if (moved.current) {
-      if (dx < -60) go(1);
-      else if (dx > 60) go(-1);
+      const d = swipePageDelta(dx);
+      if (d !== 0) go(d);
     }
     setDrag(0);
     setDragging(false);

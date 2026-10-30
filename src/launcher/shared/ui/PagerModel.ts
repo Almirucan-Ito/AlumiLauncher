@@ -93,6 +93,90 @@ export const FLIP_MS = TUNING.moveAnimationMs;
 /** ドラッグ中のアイコンが、相手のマスのどこにいるか: `center`(中央 = 重ねる)/ `inner`(内側 = 入れ替え)/ `rim`(縁 = 何もしない)。 */
 export type HoverZone = "center" | "inner" | "rim";
 
+/**
+ * ドラッグ中のアイコンが、相手のマスのどこにいるかを判定する。
+ * @param fx マスの中の横の位置(0〜1)
+ * @param fy マスの中の縦の位置(0〜1)
+ * @param centerSize 中央とみなす広さ(中心からの距離。0.5 でマス全体)
+ * @param mergeable 相手に重ねられるか(重ねられないときは、中央でも「重ねる」にしない)
+ * @returns `center`(重ねる)/ `inner`(入れ替え)/ `rim`(何もしない)
+ */
+export function hoverZoneOf(fx: number, fy: number, centerSize: number, mergeable: boolean): HoverZone {
+  const inCenter = Math.abs(fx - 0.5) < centerSize && Math.abs(fy - 0.5) < centerSize;
+  const inInner = fx > RIM_ZONE && fx < 1 - RIM_ZONE && fy > RIM_ZONE && fy < 1 - RIM_ZONE;
+  return mergeable && inCenter ? "center" : inInner ? "inner" : "rim";
+}
+
+/**
+ * ドラッグしているものを、相手の位置へ入れ替えた並びを作る。
+ * @param items いまの並び
+ * @param getId 項目の ID を返す関数
+ * @param dragId ドラッグしているものの ID
+ * @param targetId 入れ替える相手の ID
+ * @returns 新しい並び。入れ替えが要らないとき(どちらかが無い・同じ)は `null`
+ */
+export function reorderedItems<T>(
+  items: readonly T[],
+  getId: (item: T) => string | null,
+  dragId: string,
+  targetId: string,
+): T[] | null {
+  const from = items.findIndex((it) => getId(it) === dragId);
+  const to = items.findIndex((it) => getId(it) === targetId);
+  if (from < 0 || to < 0 || from === to) return null;
+  const next = items.slice();
+  const [m] = next.splice(from, 1);
+  next.splice(to, 0, m);
+  return next;
+}
+
+/** 一覧の矩形(画面の座標)。 */
+export interface Box {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+}
+
+/**
+ * ドラッグ中のポインタが、一覧の左右の端に寄っているかを判定する(ページ送りの向き)。
+ * @param x ポインタの x 座標
+ * @param y ポインタの y 座標
+ * @param rect 一覧の表示領域
+ * @param band 端とみなすための枠(この中にいるときだけ有効。枠の外へ出しているときは送らない)
+ * @param frozen Shift を押している間は `true`(送らない)
+ * @returns `-1` 前のページへ / `1` 次のページへ / `0` 送らない
+ */
+export function edgeDirectionOf(x: number, y: number, rect: Box, band: Box, frozen: boolean): -1 | 0 | 1 {
+  const inBand = y >= band.top && y <= band.bottom && x >= band.left && x <= band.right;
+  if (!inBand || frozen) return 0;
+  if (x < rect.left + EDGE_PX) return -1;
+  if (x > rect.right - EDGE_PX) return 1;
+  return 0;
+}
+
+/**
+ * スワイプで引っ張った量から、送るページの数を決める。
+ * @param dx 横に動かした量(px。左へ動かすと負)
+ * @returns `1` 次のページへ(左へ 60px より大きく)/ `-1` 前のページへ(右へ)/ `0` 送らない
+ */
+export function swipePageDelta(dx: number): -1 | 0 | 1 {
+  if (dx < -60) return 1;
+  if (dx > 60) return -1;
+  return 0;
+}
+
+/**
+ * 端のページで、さらに外へ引っ張ったときに、ゴム紐のように抵抗を付ける。
+ * @param dx 横に動かした量(px)
+ * @param page 表示中のページ(0 から)
+ * @param count ページの数
+ * @returns 画面に反映する量(端の外向きなら 0.3 倍)
+ */
+export function withResistance(dx: number, page: number, count: number): number {
+  return (page === 0 && dx > 0) || (page === count - 1 && dx < 0) ? dx * 0.3 : dx;
+}
+
 /** グリッドの列数・行数・1 ページの数。 */
 export interface Grid {
   cols: number;

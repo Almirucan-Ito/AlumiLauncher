@@ -15,7 +15,7 @@ import { t } from "../../shared/i18n/i18n";
 import { makeEdgeFlipper, type PagerApi } from "../../shared/ui/Pager";
 import { type Origin } from "../folders/FolderModel";
 import { type Snapshot, type HistoryAction } from "../history/useUndoHistory";
-import { HOME_ORDER_KEY, entryKey, type HomeEntry } from "./HomeModel";
+import { HOME_ORDER_KEY, clampSlot, entryKey, folderUnderPoint, insertClamped, type HomeEntry } from "./HomeModel";
 
 /**
  * ホームとフォルダ内の間で、アイコンをドラッグして受け渡す(スマートフォンのホーム画面と同じ)。
@@ -162,8 +162,7 @@ export function useDragHandover({
       let cur = await api.moveItem(item.path, folder.path);
       flushReorder();
       const before = snapshot();
-      const next = paths.slice();
-      next.splice(Math.min(index, next.length), 0, cur);
+      const next = insertClamped(paths, index, cur);
       mutate((c) => ({ ...c, orders: { ...c.orders, [folder.id]: next } }));
       const after = snapshot();
       pushHistory({
@@ -214,9 +213,7 @@ export function useDragHandover({
    * @param y 画面の y 座標
    */
   const computeHomeSlot = (x: number, y: number): number => {
-    const len = entriesRef.current.length;
-    const g = homeSlotAt.current?.(x, y);
-    return g === null || g === undefined ? len : Math.min(g, len);
+    return clampSlot(homeSlotAt.current?.(x, y), entriesRef.current.length);
   };
 
   /**
@@ -224,16 +221,13 @@ export function useDragHandover({
    * @returns フォルダの ID と要素。なければ `null`
    */
   const homeFolderUnder = (x: number, y: number): { id: string; el: HTMLElement } | null => {
-    const openId = stateRef.current.open?.folder.id;
-    for (const el of document.querySelectorAll<HTMLElement>(`.home .cell[data-id^="f:"]`)) {
-      const id = (el.dataset.id ?? "").slice(2);
-      if (id === openId) continue;
+    const cells = [...document.querySelectorAll<HTMLElement>(`.home .cell[data-id^="f:"]`)];
+    const rects = cells.map((el) => {
       const r = el.getBoundingClientRect();
-      const [cx, cy] = [r.left + r.width / 2, r.top + r.height / 2];
-      if (Math.abs(x - cx) <= r.width * TUNING.folderZone && Math.abs(y - cy) <= r.height * TUNING.folderZone)
-        return { id, el };
-    }
-    return null;
+      return { id: (el.dataset.id ?? "").slice(2), left: r.left, top: r.top, width: r.width, height: r.height };
+    });
+    const hit = folderUnderPoint(rects, x, y, TUNING.folderZone, stateRef.current.open?.folder.id);
+    return hit ? { id: hit.id, el: cells[rects.indexOf(hit)] } : null;
   };
   /** 「このフォルダへ入れる」の強調表示を、指定のフォルダだけに付ける(`null` で全部消す)。 */
   const markFolderTarget = (el: HTMLElement | null) => {
@@ -274,8 +268,7 @@ export function useDragHandover({
       let cur = await api.moveItem(item.path, home);
       flushReorder();
       const before = snapshot();
-      const keys = entriesRef.current.map(entryKey);
-      keys.splice(slot === null ? keys.length : Math.min(slot, keys.length), 0, `i:${cur}`);
+      const keys = insertClamped(entriesRef.current.map(entryKey), slot, `i:${cur}`);
       mutate((c) => ({ ...c, orders: { ...c.orders, [HOME_ORDER_KEY]: keys } }));
       const after = snapshot();
       pushHistory({
