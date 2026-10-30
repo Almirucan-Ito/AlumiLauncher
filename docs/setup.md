@@ -55,6 +55,7 @@ rustup show  # フォルダの中で実行すると、rust-toolchain.toml の版
 | インストーラーと、ポータブル版の zip を作る    | `.\scripts\release.ps1 -Zip`          |
 | インストーラーと、オフライン版を作る           | `.\scripts\release.ps1 -Offline`      |
 
+- コマンドは、**リポジトリ直下(`package.json` のある場所)**で実行します。実行前に `pwd` で今いる場所を確かめてください(インストーラーを作るときの確認は、[build.md](build.md) の「今いる場所を `pwd` で確かめる」)。`\\wsl...` のような場所では、ビルドできません。
 - 初回の `npm run tauri dev` は、Rust のビルドで数分かかります。2 回目からは速くなります。
 - すでにインストール版の AlumiLauncher が動いていると、開発中のアプリは、**二重起動を避ける仕組み**で、すぐ閉じてしまいます。先に、トレイから終了してください。
 - 開発中のアプリのデータは、通常の `%AppData%\AlumiLauncher` を使います。分けたいときは、exe の隣に `portable.txt` を置くと、その隣の `data` に保存されます(`src-tauri\target\debug\` に置く)。
