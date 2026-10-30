@@ -1,0 +1,9 @@
+{
+  "name": "電卓",
+  "name_en": "Calculator",
+  "description": "四則演算・かっこ・%・履歴つきの電卓(キーボードでも使えます)",
+  "description_en": "A calculator with + − × ÷, parentheses, % and history (the keyboard works too)",
+  "entry": "view/index.html",
+  "icon": "icon.svg",
+  "permissions": ["storage"]
+}
