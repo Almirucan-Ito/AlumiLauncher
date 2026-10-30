@@ -1,12 +1,6 @@
 /* ウィジェットの欄(ヘッダー・フッター)と追加画面 */
 /* ---------- ウィジェット(ヘッダー・フッター) ---------- */
-.wbar {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-}
+/* ヘッダー・フッターの並べ方(グリッド)は、widget-layers.css の `.wbar` */
 .wbar-header,
 .wbar-footer {
   padding: 6px var(--side-x);
@@ -16,7 +10,6 @@
 }
 .widget {
   position: relative;
-  max-width: 100%;
 }
 .widget.moving {
   z-index: 50;

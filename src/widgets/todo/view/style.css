@@ -1,7 +1,17 @@
 /* todo ウィジェットの見た目(本体の styles.css の後に読み込まれる) */
-.wtodo-add {
+.wtodo {
+  width: 100%;
   min-width: 0;
+  justify-content: center;
+}
+
+.wtodo-add {
+  width: 100%;
+  min-width: 0;
+  margin-top: 6px;
+  padding: 5px 0 0;
   border: 0;
+  border-top: 1px solid var(--stroke);
   outline: none;
   background: transparent;
   color: inherit;
@@ -10,22 +20,19 @@
   -webkit-user-select: text;
 }
 
-.wtodo {
-  width: 220px;
-}
-
 .wtodo-list {
   display: flex;
   flex-direction: column;
   gap: 2px;
   max-height: 120px;
   overflow: auto;
+  scrollbar-width: none;
 }
 
 .wtodo-row {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   cursor: pointer;
 }
 
@@ -48,22 +55,6 @@
 
 .wtodo-row:hover .wx {
   opacity: 1;
-}
-
-.wtodo-add {
-  width: 100%;
-  margin-top: 6px;
-  padding: 5px 0 0;
-  border-top: 1px solid var(--stroke);
-}
-
-.wtodo {
-  width: 100%;
-  min-width: 0;
-}
-
-.wtodo-row {
-  gap: 8px;
 }
 
 .wtodo-head {
@@ -103,12 +94,6 @@
 }
 
 /* 高さに合わせた中身(1 マス = 次のやること 1〜2 件 / 2 マス = 題名・やること・入力欄 / 3 マス = 予定も) */
-.wtodo {
-  justify-content: center;
-}
-.wtodo-list {
-  scrollbar-width: none;
-}
 @container (max-height: 64px) {
   .wtodo {
     padding: 4px 10px;

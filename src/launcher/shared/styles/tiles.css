@@ -21,7 +21,7 @@
   display: grid;
   place-items: center;
   border-radius: calc(var(--plate) * 0.28);
-  background: linear-gradient(160deg, var(--plate-a), var(--plate-b));
+  /* 背景と枠の色は、widget-layers.css で、UI の色の透過度に合わせて決める */
   border: 1px solid var(--stroke);
   box-shadow:
     var(--plate-shadow),

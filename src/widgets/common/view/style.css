@@ -1,7 +1,9 @@
 /* common ウィジェットの見た目(本体の styles.css の後に読み込まれる) */
 .wicons {
   display: flex;
-  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
   min-height: 36px;
   align-items: center;
 }
@@ -30,15 +32,6 @@
   height: 70%;
   border-radius: 8px;
   background: var(--glass);
-}
-
-.wicons {
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.wicons {
-  gap: 10px;
 }
 
 /* 高さに合わせた中身(1 マス = アイコンだけ / 2 マス以上 = 題名とアイコン) */
