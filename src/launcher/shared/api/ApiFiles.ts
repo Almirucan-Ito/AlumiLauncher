@@ -191,6 +191,16 @@ export const filesApi = {
     return listen<string>("folder-changed", (e) => cb(e.payload));
   },
   /**
+   * ミニアプリのフォルダが、外(エクスプローラーなど)で増えた・減ったときに呼ばれる関数を登録する(ミニアプリ 1 つ分のフォルダの増減だけ。中のデータの書き込みでは呼ばれない)。
+   * @param cb 呼ばれる関数
+   * @returns 登録を解除する関数
+   */
+  async onMiniappsChanged(cb: () => void): Promise<() => void> {
+    if (!isTauri) return () => {};
+    const { listen } = await import("@tauri-apps/api/event");
+    return listen("miniapps-changed", () => cb());
+  },
+  /**
    * エクスプローラーで開く。
    * @param path 対象のパス
    * @param select `true` なら、そのファイルを選択した状態で、フォルダを開く

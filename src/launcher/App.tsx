@@ -163,7 +163,7 @@ export function App() {
   });
 
   // ---- 音量・ツールチップ・起動時の復元・Rust 側からの通知 ----
-  useAppServices(config, mutate, bumpFolder, flash);
+  useAppServices(config, mutate, bumpFolder, flash, refreshMinis);
   // エクスプローラーからのドラッグ&ドロップ
   useExplorerDrop({ stateRef, flash, addPaths, addFolder, refreshMods, refreshMinis, setLauncherPath, bumpFolder });
   // 起動時の読み込み・メニューを閉じる・フォルダが消えたら閉じる・ウィジェットからのフォルダの要求

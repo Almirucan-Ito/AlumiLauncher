@@ -3,8 +3,10 @@
 use crate::config::model::MAX_USAGE;
 use crate::files::operations::add_paths_into;
 use crate::files::operations::move_file;
+use crate::files::roots::classify_change;
 use crate::files::roots::is_allowed_folder;
 use crate::files::roots::norm_path;
+use crate::files::roots::WatchEvent;
 use crate::files::text_files::text_file_name;
 use crate::files::usage::bump_usage;
 use crate::files::usage::top_usage;
@@ -117,6 +119,65 @@ fn file_changes_in_a_watched_folder_are_reported() {
     assert!(wait(false), "追加が届く");
     fs::remove_file(base.join("sub").join("a.lnk")).unwrap();
     assert!(wait(true), "削除が届く");
+    drop(w);
+    let _ = fs::remove_dir_all(&base);
+}
+
+#[test]
+fn changes_are_classified_by_the_watch_they_belong_to() {
+    let roots = vec![(norm_path("C:\\Work"), "C:\\Work".to_string())];
+    let shallow = vec![norm_path("C:\\Data\\miniapps")];
+    let c = |p: &str| classify_change(&roots, &shallow, &norm_path(p));
+    // 登録フォルダは、中のどこが変わっても、そのフォルダのパスで知らせる
+    assert_eq!(c("C:\\Work"), Some(WatchEvent::Folder("C:\\Work".into())));
+    assert_eq!(
+        c("C:\\work\\sub\\a.lnk"),
+        Some(WatchEvent::Folder("C:\\Work".into()))
+    );
+    assert_eq!(
+        c("C:\\Workshop\\a.lnk"),
+        None,
+        "名前が前方一致なだけのものは当たらない"
+    );
+    // ミニアプリのフォルダは、直下(ミニアプリ 1 つ分)の増減だけ
+    assert_eq!(c("C:\\Data\\miniapps"), Some(WatchEvent::Miniapps));
+    assert_eq!(c("C:\\Data\\miniapps\\youtube"), Some(WatchEvent::Miniapps));
+    assert_eq!(
+        c("C:\\Data\\miniapps\\youtube\\data\\webview\\Cache"),
+        None,
+        "ミニアプリの中のデータの書き込みは、当たらない"
+    );
+    assert_eq!(c("C:\\Data\\miniapps2\\x"), None);
+    assert_eq!(c("C:\\Data\\other"), None);
+}
+
+#[test]
+fn removing_a_miniapp_folder_is_reported_by_a_shallow_watch() {
+    use notify::{EventKind, RecursiveMode, Watcher};
+    let base = std::env::temp_dir().join(format!("alumi-shallow-{}", std::process::id()));
+    fs::create_dir_all(base.join("youtube").join("data")).unwrap();
+    let (tx, rx) = std::sync::mpsc::channel();
+    let mut w = notify::recommended_watcher(move |r: notify::Result<notify::Event>| {
+        if let Ok(e) = r {
+            let _ = tx.send(e);
+        }
+    })
+    .unwrap();
+    w.watch(&base, RecursiveMode::NonRecursive).unwrap();
+    let shallow = vec![norm_path(&base.to_string_lossy())];
+    fs::remove_dir_all(base.join("youtube")).unwrap();
+    let end = std::time::Instant::now() + Duration::from_secs(3);
+    let mut got = false;
+    while std::time::Instant::now() < end && !got {
+        if let Ok(e) = rx.recv_timeout(Duration::from_millis(200)) {
+            got = matches!(e.kind, EventKind::Remove(_))
+                && e.paths.iter().any(|p| {
+                    classify_change(&[], &shallow, &norm_path(&p.to_string_lossy()))
+                        == Some(WatchEvent::Miniapps)
+                });
+        }
+    }
+    assert!(got, "ミニアプリのフォルダを消すと、届く");
     drop(w);
     let _ = fs::remove_dir_all(&base);
 }

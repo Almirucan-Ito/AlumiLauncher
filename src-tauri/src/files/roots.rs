@@ -1,6 +1,7 @@
 //! 操作してよいフォルダ(登録フォルダと launcherFolder)の管理と、その見張り(変更を画面へ知らせる)。
 
 use crate::config::model::view_of;
+use crate::extensions::catalog::miniapps_dir;
 use crate::files::listing::launcher_dir;
 use crate::state::AppState;
 use crate::state::LockExt;
@@ -26,17 +27,61 @@ pub(crate) fn norm_path(s: &str) -> String {
         .to_string()
 }
 
+/// 見張りが見つけた変化。
+#[derive(Debug, PartialEq, Eq)]
+pub(crate) enum WatchEvent {
+    /// 登録フォルダ(か、ホームのアイコンの保存先)の中身が変わった(そのフォルダのパス)
+    Folder(String),
+    /// ミニアプリのフォルダが、増えた・減った(エクスプローラーでの削除・コピーなど)
+    Miniapps,
+}
+
+/// 変わったパスが、どの見張りに当たるかを調べる。
+///
+/// # 引数
+/// * `roots` - 見張っている登録フォルダ(`(比較用のパス, 元のパス)`)。その中のどこが変わっても当たる
+/// * `shallow` - ミニアプリのフォルダ(比較用のパス)。直下の増減だけが当たる(中のデータ・キャッシュの書き込みでは、当たらない)
+/// * `changed` - 変わったパス(比較用の形)
+///
+/// # 戻り値
+/// 当たった見張りの種類。当たらなければ `None`(`\` を付けて比べるので、`C:\a` が `C:\ab` に誤って当たらない)
+pub(crate) fn classify_change(
+    roots: &[(String, String)],
+    shallow: &[String],
+    changed: &str,
+) -> Option<WatchEvent> {
+    if let Some((_, orig)) = roots
+        .iter()
+        .find(|(r, _)| changed == *r || changed.starts_with(&format!("{r}\\")))
+    {
+        return Some(WatchEvent::Folder(orig.clone()));
+    }
+    let direct = shallow.iter().any(|s| {
+        changed == *s
+            || changed
+                .strip_prefix(&format!("{s}\\"))
+                .is_some_and(|rest| !rest.is_empty() && !rest.contains('\\'))
+    });
+    direct.then_some(WatchEvent::Miniapps)
+}
+
 /// 登録フォルダ(とホームのアイコンの保存先)の中身が変わったら、画面へ知らせる見張りを作り直す。
 /// エクスプローラーでの追加・削除・名前変更が、すぐ画面に出る。見張るパスが前と同じなら、何もしない(並べ替えのたびに作り直さないため)。
+/// ミニアプリのフォルダは、直下だけを見張る(ミニアプリのデータ・キャッシュは、中で頻繁に書き換わるため)。
 ///
 /// # 引数
 /// * `app` - アプリのハンドル
-/// * `paths` - 見張るフォルダのパスの一覧
-pub(crate) fn restart_watcher(app: &AppHandle, paths: Vec<String>) {
+/// * `paths` - 見張るフォルダのパスの一覧(中も見張る)
+/// * `shallow` - 見張るフォルダのパスの一覧(直下だけ見張る)
+pub(crate) fn restart_watcher(app: &AppHandle, paths: Vec<String>, shallow: Vec<String>) {
     use notify::{EventKind, RecursiveMode, Watcher};
     let state = app.state::<AppState>();
     let mut slot = state.watcher.lock_ok();
-    if slot.as_ref().map(|(old, _)| *old == paths).unwrap_or(false) {
+    if slot
+        .as_ref()
+        .map(|(old, old_shallow, _)| *old == paths && *old_shallow == shallow)
+        .unwrap_or(false)
+    {
         return;
     }
     *slot = None;
@@ -44,6 +89,7 @@ pub(crate) fn restart_watcher(app: &AppHandle, paths: Vec<String>) {
         return;
     };
     let roots: Vec<(String, String)> = paths.iter().map(|p| (norm_path(p), p.clone())).collect();
+    let shallow_norm: Vec<String> = shallow.iter().map(|p| norm_path(p)).collect();
     let Ok(mut watcher) = notify::recommended_watcher(move |res: notify::Result<notify::Event>| {
         let Ok(ev) = res else { return };
         if matches!(ev.kind, EventKind::Access(_)) {
@@ -51,12 +97,8 @@ pub(crate) fn restart_watcher(app: &AppHandle, paths: Vec<String>) {
         }
         for p in &ev.paths {
             let np = norm_path(&p.to_string_lossy());
-            // 変わったパスが、見張っている登録フォルダ自身か、その中なら、登録フォルダのパスを知らせる(`\` を付けて比べるので、`C:\a` が `C:\ab` に誤って当たらない)
-            if let Some((_, orig)) = roots
-                .iter()
-                .find(|(r, _)| np == *r || np.starts_with(&format!("{r}\\")))
-            {
-                let _ = tx.send(orig.clone());
+            if let Some(change) = classify_change(&roots, &shallow_norm, &np) {
+                let _ = tx.send(change);
             }
         }
     }) else {
@@ -65,33 +107,45 @@ pub(crate) fn restart_watcher(app: &AppHandle, paths: Vec<String>) {
     for p in &paths {
         let _ = watcher.watch(Path::new(p), RecursiveMode::Recursive);
     }
-    *slot = Some((paths, watcher));
+    for p in &shallow {
+        let _ = watcher.watch(Path::new(p), RecursiveMode::NonRecursive);
+    }
+    *slot = Some((paths, shallow, watcher));
 }
 
-/// 見張りからの知らせを受けるスレッドを始める。知らせを最大 2 秒(250ms 静かになるまで)ためて、まとめて画面へ送る(`folder-changed` イベント)。
+/// 見張りからの知らせを受けるスレッドを始める。知らせを最大 2 秒(250ms 静かになるまで)ためて、まとめて画面へ送る(登録フォルダは `folder-changed`、ミニアプリのフォルダは `miniapps-changed` イベント)。
 /// ファイルを大量に動かしたときに、画面を何度も作り直さないため。
 ///
 /// # 引数
 /// * `app` - アプリのハンドル
 pub(crate) fn spawn_watch_debouncer(app: &AppHandle) {
     use tauri::Emitter;
-    let (tx, rx) = std::sync::mpsc::channel::<String>();
+    let (tx, rx) = std::sync::mpsc::channel::<WatchEvent>();
     *app.state::<AppState>().watch_tx.lock_ok() = Some(tx);
     let app = app.clone();
     std::thread::spawn(move || {
         while let Ok(first) = rx.recv() {
-            let mut changed: HashSet<String> = HashSet::from([first]);
+            let mut folders: HashSet<String> = HashSet::new();
+            let mut miniapps = false;
+            let mut take = |ev: WatchEvent| match ev {
+                WatchEvent::Folder(p) => {
+                    folders.insert(p);
+                }
+                WatchEvent::Miniapps => miniapps = true,
+            };
+            take(first);
             let started = std::time::Instant::now();
             while started.elapsed() < Duration::from_secs(2) {
                 match rx.recv_timeout(Duration::from_millis(250)) {
-                    Ok(p) => {
-                        changed.insert(p);
-                    }
+                    Ok(ev) => take(ev),
                     Err(_) => break,
                 }
             }
-            for p in changed {
+            for p in folders {
                 let _ = app.emit("folder-changed", p);
+            }
+            if miniapps {
+                let _ = app.emit("miniapps-changed", ());
             }
         }
     });
@@ -127,7 +181,13 @@ pub(crate) fn refresh_roots(app: &AppHandle) {
     if let Some(dir) = launcher_dir(app) {
         watch.push(dir.to_string_lossy().into_owned());
     }
-    restart_watcher(app, watch);
+    // ミニアプリのフォルダは、直下の増減だけ見張る(消されたら、画面の一覧から外すため)
+    let shallow: Vec<String> = miniapps_dir(app)
+        .filter(|d| d.is_dir())
+        .map(|d| d.to_string_lossy().into_owned())
+        .into_iter()
+        .collect();
+    restart_watcher(app, watch, shallow);
 }
 
 /// 登録してよいフォルダか調べる。ドライブ直下や Windows フォルダは、起動・削除の対象が広くなりすぎるため登録させない。

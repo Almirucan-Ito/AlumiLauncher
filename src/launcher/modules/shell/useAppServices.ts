@@ -12,12 +12,14 @@ import { useStartupRestore } from "./useStartupRestore";
  * @param mutate 最新の設定に変更を適用して保存する関数
  * @param bumpFolder そのフォルダの一覧を取り直させる関数
  * @param flash 画面に一言出す関数
+ * @param refreshMinis ミニアプリの一覧を読み直す関数
  */
 export function useAppServices(
   config: Config | null,
   mutate: (fn: (c: Config) => Config) => void,
   bumpFolder: (path: string) => void,
   flash: (msg: string) => void,
+  refreshMinis: () => unknown,
 ) {
   // 音楽プレーヤー: ランチャー全体の音量を反映する(曲の一覧・設定の保存/復元は、起動時の復元で行う)
   const masterVolume = (config?.settings?.masterVolume ?? 100) / 100;
@@ -28,5 +30,5 @@ export function useAppServices(
   // ボタンなどの説明(ツールチップ)は、設定でオフのとき出さない: カーソルが乗った要素の title を、一時的に退避する(オンに戻すと戻す)
   useTooltipToggle(config?.settings?.showTooltips ?? false);
   useStartupRestore(config, mutate);
-  useBackendEvents(bumpFolder, flash);
+  useBackendEvents(bumpFolder, flash, refreshMinis);
 }
