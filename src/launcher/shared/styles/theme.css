@@ -1,7 +1,11 @@
+/* 背景のテーマ(グレー・ダーク・ホワイト・アクセント・好きな色・画像)の「変数」だけを決めるファイル。
+   部品の見た目(セレクタ)は、ここには書かない。UI の色(ボタン・メニューなどの色)は ui-colors.css */
 :root {
   --ease: cubic-bezier(0.22, 0.9, 0.28, 1);
   /* アイコンがスッと動くときの動き(最初は速く、最後はふわっと止まる) */
   --ease-move: cubic-bezier(0.2, 0.9, 0.25, 1);
+  /* すりガラス(メニュー・ダイアログ・設定パネルが共通で使う) */
+  --glass-blur: blur(16px) saturate(1.15);
   font-family: "Segoe UI Variable Text", "Segoe UI", "Yu Gothic UI", "Meiryo UI", system-ui, sans-serif;
 }
 
@@ -83,29 +87,9 @@
     var(--bgimg, none) center / cover no-repeat, rgb(40, 42, 50);
   --overlay: rgba(8, 10, 16, 0.5);
 }
-
-* {
-  box-sizing: border-box;
-  -webkit-user-select: none;
-  user-select: none;
-}
-html,
-body,
-#root {
-  height: 100%;
-  margin: 0;
-  background: transparent;
-  overflow: hidden;
-}
-button:focus,
-button:focus-visible {
-  outline: none; /* キーボードを使ったあとに出る黒い丸(フォーカスの枠)を出さない */
-}
-button {
-  font: inherit;
-  color: inherit;
-  background: none;
-  border: 0;
-  padding: 0;
-  cursor: pointer;
+/* クリア(以前の「グレー」): 色を薄く、白い光を少し足して、後ろが透けて見えるガラスのようにする。
+   .is-light と同じ強さなので、後ろに置いてある(ただし、両方は同時に付かない) */
+.app.theme-gray {
+  --bg: linear-gradient(160deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.05) 58%), rgba(72, 77, 90, 0.62);
+  --sheet-bg: rgb(82, 87, 100);
 }

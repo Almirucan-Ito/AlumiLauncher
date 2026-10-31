@@ -1,5 +1,12 @@
-/* スタイルの入口。読み込む順番が、そのまま、規則の優先の順番になる(順番を変えると、見た目が変わる)。 */
+/*
+ * スタイルの入口。詳しい決まりは README.md(同じフォルダ)。
+ *   - 1 つの部品の規則は、1 つのファイルに集める(同じセレクタを、あちこちに分けて書かない)
+ *   - 色は、theme.css(背景)と ui-colors.css(UI)の「変数」だけで決める。部品は、その変数を使うだけ
+ *   - 規則の強さは、まずセレクタの強さで決まる。同じ強さのとき(だけ)、あとに読み込んだほうが勝つので、
+ *     ここの順番を変えると、見た目が変わることがある
+ */
 @import "./theme.css";
+@import "./ui-colors.css";
 @import "./base.css";
 @import "./pager.css";
 @import "./tiles.css";
@@ -8,11 +15,10 @@
 @import "./settings.css";
 @import "./dialogs.css";
 @import "./menus.css";
-@import "./compact.css";
-@import "./ui-colors.css";
 @import "./widgets.css";
+@import "./clock.css";
 @import "./widget-contents.css";
 @import "./miniapps.css";
-@import "./widget-layers.css";
+@import "./compact.css";
 @import "./desktop-mode.css";
 @import "./start-apps.css";

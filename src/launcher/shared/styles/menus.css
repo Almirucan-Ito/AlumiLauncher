@@ -1,5 +1,5 @@
-/* トースト・メニュー・キーボード選択・ショートカットの設定ボタン・プリセット切り替え */
-/* ---------- トースト / メニュー ---------- */
+/* トースト・右クリックメニュー */
+/* ---------- トースト ---------- */
 .toast {
   position: absolute;
   left: 50%;
@@ -16,26 +16,30 @@
   animation: fade 0.2s ease both;
   pointer-events: none;
 }
+
+/* ---------- 右クリックメニュー ---------- */
 .menu {
   position: fixed;
   z-index: 60;
+  /* 文字がすべて入る幅にする(画面の端でも、文字が切れない) */
+  width: max-content;
+  max-width: calc(100vw - 16px);
   padding: 5px;
   border-radius: 12px;
   background: color-mix(in srgb, var(--menu-bg) var(--ui-alpha, 100%), transparent);
   border: 1px solid var(--stroke);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+  backdrop-filter: var(--glass-blur);
   animation: fade 0.12s ease both;
-}
-.menu button {
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 13px;
-  white-space: nowrap;
 }
 .menu button {
   display: block;
   width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
   text-align: left;
+  white-space: nowrap;
 }
 .menu button:hover {
   background: var(--on);
@@ -43,70 +47,4 @@
 .menu button.danger:hover {
   background: #e5484d;
   color: #fff;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* キーボードで選んでいるアイコン: 枠や周りの光は付けず、少し持ち上げて明るくするだけ */
-.tile {
-  outline: none;
-}
-.tile:focus-visible {
-  outline: none;
-}
-.cell.selected .tile {
-  filter: brightness(1.45) saturate(0.85);
-  transform: translateY(-3px) scale(1.04);
-}
-.cell.selected .plate:not(.folder) {
-  background-color: rgba(255, 255, 255, 0.22);
-}
-
-/* ショートカットの設定ボタン */
-.small.hk {
-  flex: 1;
-  text-align: center;
-  min-width: 0;
-}
-.small.hk.rec {
-  background: #2f6bff;
-  color: #fff;
-}
-
-/* 左上のプリセット切り替え(1・2・3) */
-.presets {
-  position: absolute;
-  top: 8px;
-  left: 12px;
-  z-index: 6;
-  display: flex;
-  gap: 4px;
-  padding: 3px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--glass) var(--ui-alpha, 100%), transparent);
-  border: 1px solid var(--stroke);
-}
-.presets button {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  font-size: 14px;
-  color: var(--text-dim);
-  transition:
-    background 0.15s,
-    color 0.15s;
-}
-.presets button:hover {
-  background: var(--glass-strong);
-  color: var(--text);
-}
-.presets button.on {
-  background: var(--on);
-  color: var(--text);
-  font-weight: 600;
 }

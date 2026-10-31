@@ -1,9 +1,15 @@
-/* ウィジェットの中身(よく使う・最近・検索・ToDo・タイマー) */
-/* ---------- ウィジェットの中身(よく使う・最近・検索・ToDo・付箋・タイマー) ---------- */
+/* ウィジェットの中身の共通部分(カード・見出し・確認のカード)。各ウィジェット固有の見た目は、それぞれの view/style.css */
+/* ---------- カード(時計を除く、よく使う・最近・検索・ToDo・タイマーなど) ---------- */
 .wcard {
   padding: 8px 12px;
   border-radius: 14px;
-  /* 背景と枠は、widget-layers.css で、フォルダの板と同じ色・透過度に決める */
+  /* 塗りと枠は、フォルダの板(.plate)と同じ。UI の色の「透過度」を反映する(--card-fill・--card-edge) */
+  background: var(--card-fill);
+  border: 1px solid var(--card-edge);
+  box-shadow:
+    var(--plate-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px); /* 後ろの画像が、文字の邪魔にならないように */
   color: var(--text);
   font-size: 13px;
 }
@@ -27,4 +33,15 @@
 .wx:hover {
   background: var(--glass-strong);
   color: var(--text);
+}
+/* 外部と通信するウィジェットの、確認のカード */
+.wconsent {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+}
+.wconsent span {
+  flex: 1;
+  min-width: 0;
 }

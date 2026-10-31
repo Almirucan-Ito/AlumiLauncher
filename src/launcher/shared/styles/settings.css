@@ -13,6 +13,7 @@
   background: color-mix(in srgb, var(--menu-bg) var(--ui-alpha, 100%), transparent);
   border: 1px solid var(--stroke);
   box-shadow: 0 18px 44px rgba(0, 0, 0, 0.45);
+  backdrop-filter: var(--glass-blur);
   animation: rise 0.2s var(--ease) both;
 }
 @keyframes rise {
@@ -121,6 +122,16 @@
   border-radius: 50%;
   border: 1px solid rgba(128, 128, 128, 0.5);
 }
+/* 色の見本: 透けていることが分かるように、市松模様の上に、白い半透明をのせる */
+.sw-gray .chip {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.14)),
+    repeating-conic-gradient(rgba(130, 134, 146, 0.55) 0 25%, rgba(235, 238, 245, 0.55) 0 50%) 0 0 / 8px 8px;
+  border-color: rgba(255, 255, 255, 0.7);
+}
+.sw-auto .chip {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55) 50%, #f4f6fa 50%);
+}
 .sw-dark .chip {
   background: #0e1018;
 }
@@ -211,7 +222,13 @@
 .seg.two button {
   padding: 8px 0;
 }
-
-.app.maxed {
-  border-radius: 0;
+/* ショートカットの設定ボタン */
+.small.hk {
+  flex: 1;
+  text-align: center;
+  min-width: 0;
+}
+.small.hk.rec {
+  background: #2f6bff;
+  color: #fff;
 }

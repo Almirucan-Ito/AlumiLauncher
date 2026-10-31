@@ -13,13 +13,13 @@ export interface PagerLayout {
   compact?: boolean;
 }
 
-/** アイコン 1 マスの横の大きさの比率(`styles.css` の `.page` と揃えること)。 */
+/** アイコン 1 マスの横の大きさの比率(`pager.css` の `.page` と揃えること)。 */
 const CELL_W = 1.45;
-/** アイコン 1 マスの縦の大きさの比率(`styles.css` の `.page` と揃えること)。 */
+/** アイコン 1 マスの縦の大きさの比率(`pager.css` の `.page` と揃えること)。 */
 const CELL_H = 1.35;
 /** ラベルの分として、1 マスの高さに足す値(px)。 */
 const CELL_H_EXTRA = 32;
-/** compact(ラベル無し)のときの、1 マスの高さの比率(`styles.css` の `.app.compact .page` と揃えること)。 */
+/** compact(ラベル無し)のときの、1 マスの高さの比率(`compact.css` の `.app.compact .page` と揃えること)。 */
 const CELL_H_COMPACT = 1.1;
 
 /** 外部(別の一覧からのドラッグ)から、この一覧を操作する窓口。`go` はページ送り(+1 / -1)、`rect` は一覧の表示領域(画面の座標)。 */

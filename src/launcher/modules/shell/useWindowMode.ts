@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { api } from "../../shared/api/ApiModel";
 import { BARS_MIN_HEIGHT, BARS_MIN_WIDTH } from "../widgets/WidgetBar";
 
-/** この高さ(px)より低いウィンドウは、小さい表示(compact: ラベルを消して、アイコンだけ詰めて並べる)にする。`styles.css` の `@media (max-height)` と同じ値にしておくこと。 */
+/** この高さ(px)より低いウィンドウは、小さい表示(compact: ラベルを消して、アイコンだけ詰めて並べる)にする。この値で `.app.compact` のクラスが付き、`compact.css` が効く(CSS 側には、高さの数値は無い)。 */
 const COMPACT_HEIGHT = 200;
 
 /**
