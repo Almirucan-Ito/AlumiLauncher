@@ -2,7 +2,9 @@
 
 use crate::config::model::MAX_USAGE;
 use crate::files::operations::add_paths_into;
+use crate::files::operations::check_new_file_name;
 use crate::files::operations::move_file;
+use crate::files::operations::rename_file;
 use crate::files::roots::classify_change;
 use crate::files::roots::is_allowed_folder;
 use crate::files::roots::norm_path;
@@ -179,6 +181,81 @@ fn removing_a_miniapp_folder_is_reported_by_a_shallow_watch() {
     }
     assert!(got, "ミニアプリのフォルダを消すと、届く");
     drop(w);
+    let _ = fs::remove_dir_all(&base);
+}
+
+#[test]
+fn new_file_names_are_checked() {
+    let lnk = Path::new("C:\\home\\Chrome.lnk");
+    // 使える: 同じ拡張子(大文字・小文字は気にしない)・日本語・空白を含む名前
+    assert_eq!(check_new_file_name(lnk, "ブラウザ.lnk"), Ok(()));
+    assert_eq!(check_new_file_name(lnk, "My Chrome.LNK"), Ok(()));
+    // 使えない文字・空・前後の空白・終わりの `.`・予約名・長すぎる名前
+    for bad in [
+        "", " a.lnk", "a.lnk ", "a/b.lnk", "a\\b.lnk", "a:b.lnk", "a*.lnk", "a?.lnk", "a\"b.lnk",
+        "a<b.lnk", "a>b.lnk", "a|b.lnk", "a\nb.lnk", "..", "a.lnk.", "con.lnk", "NUL.lnk",
+        "com1.lnk", "LPT9.lnk",
+    ] {
+        assert_eq!(
+            check_new_file_name(lnk, bad),
+            Err("invalid_name"),
+            "{bad:?}"
+        );
+    }
+    assert_eq!(
+        check_new_file_name(lnk, &format!("{}.lnk", "あ".repeat(200))),
+        Err("invalid_name")
+    );
+    // 拡張子は変えられない(種類のすり替えを防ぐ)。拡張子だけの名前も不可
+    assert_eq!(check_new_file_name(lnk, "a.exe"), Err("extension_changed"));
+    assert_eq!(check_new_file_name(lnk, "a"), Err("extension_changed"));
+    assert_eq!(check_new_file_name(lnk, ".lnk"), Err("extension_changed"));
+    assert_eq!(
+        check_new_file_name(lnk, "a.lnk.bat"),
+        Err("extension_changed")
+    );
+    // 拡張子の無いファイルには、`.` を含む名前は付けられない
+    let plain = Path::new("C:\\home\\README");
+    assert_eq!(check_new_file_name(plain, "メモ"), Ok(()));
+    assert_eq!(
+        check_new_file_name(plain, "a.exe"),
+        Err("extension_changed")
+    );
+}
+
+#[test]
+fn renaming_a_file_keeps_it_in_place_and_never_overwrites() {
+    let base = std::env::temp_dir().join(format!("alumi-rename-{}", std::process::id()));
+    let _ = fs::remove_dir_all(&base);
+    fs::create_dir_all(&base).unwrap();
+    let a = base.join("a.txt");
+    fs::write(&a, "A").unwrap();
+    fs::write(base.join("b.txt"), "B").unwrap();
+
+    // 名前が変わり、中身はそのまま
+    let renamed = rename_file(&a, "新しい名前.txt").unwrap();
+    assert_eq!(renamed, base.join("新しい名前.txt"));
+    assert!(!a.exists());
+    assert_eq!(fs::read_to_string(&renamed).unwrap(), "A");
+    // 同じ名前は、何もしない
+    assert_eq!(rename_file(&renamed, "新しい名前.txt").unwrap(), renamed);
+    // 別のファイルがある名前へは、上書きしない(どちらも残る)
+    assert_eq!(rename_file(&renamed, "b.txt"), Err("exists".to_string()));
+    assert!(renamed.exists());
+    assert_eq!(fs::read_to_string(base.join("b.txt")).unwrap(), "B");
+    // 大文字・小文字だけの変更は、できる
+    let upper = rename_file(&base.join("b.txt"), "B.TXT").unwrap();
+    assert!(upper.exists());
+    // 使えない名前・拡張子の変更は、断る(ファイルは、そのまま)
+    assert_eq!(
+        rename_file(&upper, "x/y.txt"),
+        Err("invalid_name".to_string())
+    );
+    assert_eq!(
+        rename_file(&upper, "x.exe"),
+        Err("extension_changed".to_string())
+    );
+    assert_eq!(fs::read_to_string(&upper).unwrap(), "B");
     let _ = fs::remove_dir_all(&base);
 }
 

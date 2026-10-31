@@ -6,6 +6,7 @@ import { fileLabel } from "../../shared/lib/PathUtil";
 import { type useUndoHistory } from "../history/useUndoHistory";
 import { HOME_ORDER_KEY, type HomeEntry, entryKey } from "../home/HomeModel";
 import { type OpenFolder } from "./FolderModel";
+import { replacePathInOrders } from "./ItemNameModel";
 
 /**
  * 設定に、フォルダを足す(同じパスがすでにあれば、そのまま)。表示名は、フォルダ名。
@@ -36,6 +37,7 @@ function addFolderPath(cfg: Config, path: string): Config {
  * @param entriesRef いまのホームの並び
  * @param setOpen 開いているフォルダを変える関数
  * @param setRenaming 名前を変えるフォルダを決める関数(名前の入力画面を出す)
+ * @param setRenamingItem 名前を変えるファイルを決める関数(ファイル名の入力画面を出す)
  * @param setDeleting ごみ箱へ移す前の確認に出すファイルを決める関数
  * @param reload 全体の再読み込みの番号(変わると、すべての一覧を取り直す)
  * @param history 元に戻す/やり直しの履歴(`useUndoHistory` の戻り値)
@@ -51,6 +53,7 @@ export function useFolderActions({
   entriesRef,
   setOpen,
   setRenaming,
+  setRenamingItem,
   setDeleting,
   reload,
   history,
@@ -64,6 +67,7 @@ export function useFolderActions({
   entriesRef: MutableRefObject<HomeEntry[]>;
   setOpen: Dispatch<SetStateAction<OpenFolder | null>>;
   setRenaming: Dispatch<SetStateAction<FolderEntry | null>>;
+  setRenamingItem: Dispatch<SetStateAction<Item | null>>;
   setDeleting: Dispatch<SetStateAction<Item | null>>;
   reload: number;
   history: ReturnType<typeof useUndoHistory>;
@@ -135,6 +139,41 @@ export function useFolderActions({
       flash(t("deleted", { name: item.name }));
     } catch (err) {
       flash(t("deleteFailed", { err: String(err) }));
+    }
+  };
+
+  /**
+   * ファイルの名前を変える(元のファイルの名前が変わる。元に戻せる)。並び順の記録の中のパスも、新しい名前に直す。
+   * @param item 対象のファイル
+   * @param fileName 新しい名前(拡張子を含む)
+   */
+  const renameItem = async (item: Item, fileName: string) => {
+    setRenamingItem(null);
+    if (fileName === item.name) return;
+    const dir = stateRef.current.open?.folder.path ?? launcherRef.current;
+    try {
+      flushReorder();
+      const before = snapshot();
+      let cur = await api.renameItem(item.path, fileName);
+      mutate((c) => ({ ...c, orders: replacePathInOrders(c.orders, item.path, cur) }));
+      const after = snapshot();
+      if (dir) bumpFolder(dir);
+      pushHistory({
+        undo: async () => {
+          cur = await api.renameItem(cur, item.name);
+          restoreSnapshot(before);
+          if (dir) bumpFolder(dir);
+        },
+        redo: async () => {
+          cur = await api.renameItem(cur, fileName);
+          restoreSnapshot(after);
+          if (dir) bumpFolder(dir);
+        },
+      });
+      flash(t("renamed", { name: fileName }));
+    } catch (err) {
+      const msg = String(err);
+      flash(msg.includes("exists") ? t("renameExists") : t("renameFailed", { err: msg }));
     }
   };
 
@@ -238,7 +277,7 @@ export function useFolderActions({
     }
   };
 
-  /** ホームに、空のテキストファイル(.txt)を新しく作る。 */
+  /** ホームに、空のテキストファイル(.txt)を新しく作る(作ったあと、名前を付けられる)。 */
   const createHomeFile = async () => {
     try {
       const path = await api.createTextFile("", "", t("newTextName"));
@@ -246,6 +285,7 @@ export function useFolderActions({
       setLauncherPath(home);
       bumpFolder(home);
       flash(t("createdFile", { name: fileLabel(path) }));
+      setRenamingItem({ name: fileLabel(path), path });
     } catch (err) {
       flash(t("failed", { err: String(err) }));
     }
@@ -333,6 +373,7 @@ export function useFolderActions({
     pickAndAddFolder,
     setOrder,
     renameFolder,
+    renameItem,
     deleteItem,
     shellAction,
     removeFolder,

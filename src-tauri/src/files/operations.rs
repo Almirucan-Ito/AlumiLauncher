@@ -196,6 +196,104 @@ pub async fn delete_item(app: AppHandle, path: String) -> Result<(), String> {
     }
 }
 
+/// Windows が、ファイル名に使えない「予約名」(CON・NUL・COM1・LPT1 など。拡張子の前の部分)か。
+///
+/// # 引数
+/// * `stem` - 拡張子を除いた名前
+fn is_reserved_name(stem: &str) -> bool {
+    let up = stem.to_uppercase();
+    ["CON", "PRN", "AUX", "NUL"].contains(&up.as_str())
+        || ((up.starts_with("COM") || up.starts_with("LPT"))
+            && up.len() == 4
+            && up.as_bytes()[3].is_ascii_digit())
+}
+
+/// ファイルの新しい名前として使えるか調べる。
+/// ・使えない文字(`\ / : * ? " < > |` と制御文字)・空・長すぎる(200 字まで)・前後の空白・終わりの `.`・予約名は、使えない
+/// ・**拡張子は変えられない**(`.lnk` を `.exe` に変えるなど、ファイルの種類をすり替えられないように)。拡張子の無いファイルには、`.` を含む名前を付けられない
+///
+/// # 引数
+/// * `old` - いまのファイル
+/// * `new_name` - 新しい名前(拡張子を含む。フォルダの部分は含めない)
+///
+/// # 戻り値
+/// 使えるなら `Ok`。使えないときは、理由(`invalid_name` / `extension_changed`)
+pub(crate) fn check_new_file_name(old: &Path, new_name: &str) -> Result<(), &'static str> {
+    if new_name.is_empty()
+        || new_name.chars().count() > 200
+        || new_name != new_name.trim()
+        || new_name.ends_with('.')
+        || new_name
+            .chars()
+            .any(|c| c.is_control() || "\\/:*?\"<>|".contains(c))
+        || is_reserved_name(new_name.split('.').next().unwrap_or(new_name))
+    {
+        return Err("invalid_name");
+    }
+    let old_ext = old
+        .extension()
+        .map(|e| e.to_string_lossy().to_lowercase())
+        .unwrap_or_default();
+    let same_ext = if old_ext.is_empty() {
+        !new_name.contains('.')
+    } else {
+        new_name.to_lowercase().ends_with(&format!(".{old_ext}"))
+            && new_name.len() > old_ext.len() + 1
+    };
+    if same_ext {
+        Ok(())
+    } else {
+        Err("extension_changed")
+    }
+}
+
+/// ファイルの名前を、同じフォルダの中で変える。別のファイルがすでにあれば、上書きしない。大文字・小文字だけの変更は、できる。
+///
+/// # 引数
+/// * `src` - 名前を変えるファイル
+/// * `new_name` - 新しい名前(拡張子を含む)
+///
+/// # 戻り値
+/// 変えたあとのパス。使えない名前・同名のファイルがある・変えられないときは、理由
+pub(crate) fn rename_file(src: &Path, new_name: &str) -> Result<PathBuf, String> {
+    check_new_file_name(src, new_name).map_err(String::from)?;
+    let parent = src.parent().ok_or_else(|| "invalid path".to_string())?;
+    let dest = parent.join(new_name);
+    let cur = src
+        .file_name()
+        .map(|n| n.to_string_lossy().into_owned())
+        .unwrap_or_default();
+    if cur == new_name {
+        return Ok(src.to_path_buf()); // 同じ名前: 何もしない
+    }
+    // 大文字・小文字だけ違う名前は、同じファイルなので通す(Windows は、名前の大文字・小文字を区別しないため、`exists` が `true` になる)
+    if dest.exists() && cur.to_lowercase() != new_name.to_lowercase() {
+        return Err("exists".into());
+    }
+    fs::rename(src, &dest).map_err(|e| e.to_string())?;
+    Ok(dest)
+}
+
+/// (コマンド)登録済みフォルダ内のファイルの名前を、同じフォルダの中で変える(元のファイルの名前が変わる)。
+///
+/// # 引数
+/// * `path` - 名前を変えるファイル(登録フォルダの中)
+/// * `new_name` - 新しい名前(拡張子を含む。拡張子は、変えられない)
+///
+/// # 戻り値
+/// 変えたあとのパス。登録外・ファイルでない・使えない名前・同名がある、などのときは、エラーの理由
+#[tauri::command]
+pub async fn rename_item(app: AppHandle, path: String, new_name: String) -> Result<String, String> {
+    if !in_registered(&app, &path, false) {
+        return Err("not_registered".into());
+    }
+    let src = PathBuf::from(&path);
+    if !src.is_file() {
+        return Err("not a file".into());
+    }
+    rename_file(&src, &new_name).map(|p| p.to_string_lossy().into_owned())
+}
+
 /// 同じ名前のファイルがあれば、`名前 (2).拡張子`、`名前 (3).拡張子` … と連番を付けた、まだ無い名前にする。
 ///
 /// # 引数

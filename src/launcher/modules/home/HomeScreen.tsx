@@ -43,6 +43,7 @@ export interface HomeScreenProps {
   flash: (msg: string) => void;
   showMenu: (x: number, y: number, actions: MenuAction[]) => void;
   setRenaming: Dispatch<SetStateAction<FolderEntry | null>>;
+  setRenamingItem: Dispatch<SetStateAction<Item | null>>;
   setDeleting: Dispatch<SetStateAction<Item | null>>;
 }
 
@@ -72,6 +73,7 @@ export function HomeScreen({
   flash,
   showMenu,
   setRenaming,
+  setRenamingItem,
   setDeleting,
 }: HomeScreenProps) {
   const { tickFor, setOrder, canDropOnto, onDropOntoHome, bumpFolder } = actions;
@@ -95,6 +97,7 @@ export function HomeScreen({
     actions,
     showMenu,
     setRenaming,
+    setRenamingItem,
     setDeleting,
   });
   // ホームのアイコン・フォルダを、ウィジェットの上へドラッグして落とす(ショートカットウィジェットなど。機能は modules/widgets)
