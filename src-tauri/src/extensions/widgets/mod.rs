@@ -30,7 +30,10 @@ pub(crate) use protocol::*;
 pub(crate) use scan::*;
 
 /// 1 つのファイルの大きさの上限(バイト)
-const MAX_FILE: u64 = 8 * 1024 * 1024;
+const MAX_FILE: u64 = 200 * 1024 * 1024;
+
+/// `Range` 付きのリクエスト 1 回で返す量の上限(バイト)。大きな動画・音声でも、メモリを使いすぎないようにする
+const RANGE_CHUNK: u64 = 8 * 1024 * 1024;
 
 /// 一覧に出す数の上限
 const MAX_WIDGETS: usize = 64;

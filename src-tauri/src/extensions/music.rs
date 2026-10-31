@@ -229,7 +229,7 @@ fn mime(p: &Path) -> &'static str {
 ///
 /// # 戻り値
 /// (開始位置, 終了位置)。終了が省略されていれば終了は `None`。読めなければ `None`
-fn parse_range(h: &str) -> Option<(u64, Option<u64>)> {
+pub(crate) fn parse_range(h: &str) -> Option<(u64, Option<u64>)> {
     let spec = h.trim().strip_prefix("bytes=")?;
     let (a, b) = spec.split_once('-')?;
     let start: u64 = a.trim().parse().ok()?;
