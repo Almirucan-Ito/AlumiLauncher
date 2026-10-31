@@ -1,8 +1,14 @@
 # AlumiLauncher
 
-スマートフォンのホーム画面のように、アプリ・ファイル・フォルダをグリッドに並べて、クリックで起動できる Windows 用ランチャーです。
+- スマートフォンのホーム画面のように、アプリ・ファイル・フォルダをグリッドに並べて、クリックで起動できる Windows 用ランチャーです。
+<img width="800" height="450" alt="AlumiLauncher_1" src="https://github.com/user-attachments/assets/d7bab643-7891-4629-aaf4-c26c0182ca4c" />
+
 - フォルダ(ショートカットを入れた Windows のフォルダ)を、そのまま登録できます。ドラッグで並べ替え・フォルダ作りもできます。
+<img width="800" height="450" alt="AlumiLauncher_2" src="https://github.com/user-attachments/assets/827b15af-3461-4572-b810-f912fc0e4684" />
+
 - 画面の上下に、ウィジェット(時計・検索・ToDo・タイマーなど)を置けます。メモ・ミュージック・予定とToDo などの**ミニアプリ**も、ランチャーの中で動きます。
+<img width="800" height="450" alt="AlumiLauncher_3" src="https://github.com/user-attachments/assets/bb26fdc7-1181-40f9-997f-42141a5a5e75" />
+
 - ミニアプリ・ウィジェットは、HTML / JavaScript だけで自作できます([作り方](docs/extending.md))。
 
 | | |
