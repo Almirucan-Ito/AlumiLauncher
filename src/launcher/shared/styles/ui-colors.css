@@ -1,6 +1,30 @@
-/* UI の色(時計・ボタン・フォルダ内・メニューなど。背景のテーマとは別に選べる) */
-/* ---------- UI の色(時計・ボタン・フォルダ内・メニューなど)。背景のテーマとは別に選べる ---------- */
-/* 「背景と同じ(auto)」のときは、ここのクラスを付けない。付けたときだけ、背景のテーマが決めた UI の色を上書きする */
+/* UI の色(時計・ボタン・フォルダ内・メニューなど。背景のテーマとは別に選べる)の「変数」だけを決めるファイル。
+   部品の見た目(セレクタ)は、ここには書かない。部品は、この変数を使うだけにする:
+     --btn 系 … タイトルバーのボタン・右下の丸ボタン・プリセット・ページ送りの矢印(base.css・controls.css・pager.css)
+     --clock 系 … 時計(clock.css)
+     --card-fill・--card-edge … フォルダの板(tiles.css)・ウィジェットのカード(widget-contents.css)
+   「背景と同じ(auto)」のときは、`.ui` のクラスが付かず、背景のテーマ(theme.css)の変数がそのまま使われる。
+   `.ui-gray` `.ui-dark` `.ui-white` `.ui-accent` `.ui-custom` のどれか 1 つだけが付く(同時には付かない)ので、
+   同じ強さの規則どうしで、順番が勝ち負けを決めることはない。`.ui-custom.ui-light` だけは、1 段強い(明るい色のとき) */
+
+/* ---------- 初期値(UI の色を選ばないとき。背景のテーマの色に従う) ---------- */
+.app {
+  --btn: var(--glass);
+  --btn-hover: var(--glass-strong);
+  --btn-text: var(--text-dim);
+  --btn-text-hover: var(--text);
+  --clock: var(--text);
+  --clock-dim: var(--text-dim);
+  /* フォルダの板・ウィジェットのカードの塗りと枠。UI の色の「透過度」(--ui-alpha)も、ここに反映する */
+  --card-fill: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--plate-a) var(--ui-alpha, 100%), transparent),
+    color-mix(in srgb, var(--plate-b) var(--ui-alpha, 100%), transparent)
+  );
+  --card-edge: color-mix(in srgb, var(--stroke) var(--ui-alpha, 100%), transparent);
+}
+
+/* ---------- 暗い系(グレー・ダーク・アクセント・好きな色)の、文字・線・ガラスの色 ---------- */
 .app.ui.ui-gray,
 .app.ui.ui-dark,
 .app.ui.ui-accent,
@@ -10,7 +34,6 @@
   --stroke: rgba(255, 255, 255, 0.14);
   --glass: rgba(255, 255, 255, 0.09);
   --glass-strong: rgba(255, 255, 255, 0.16);
-  /* --plate-a / --plate-b(フォルダの板の色)は、下で、UI の色ごとに決める */
   --plate-shadow: 0 8px 22px rgba(0, 0, 0, 0.3);
   --dot: rgba(255, 255, 255, 0.3);
   --dot-on: #fff;
@@ -20,14 +43,26 @@
   --glow: 255, 255, 255;
   color-scheme: dark;
 }
+
+/* ---------- 色ごとの、フォルダ内・メニュー・板・ボタンの色 ---------- */
+/* クリア: 透けたガラスの見た目 */
 .app.ui.ui-gray {
-  /* --sheet-bg・--menu-bg・フォルダの板の色は、widget-layers.css(透けたガラスの見た目)で決める */
   --overlay: rgba(20, 22, 28, 0.62);
+  --sheet-bg: rgb(82, 87, 100);
+  --menu-bg: rgba(54, 58, 70, 0.74);
+  --plate-a: rgba(255, 255, 255, 0.26);
+  --plate-b: rgba(255, 255, 255, 0.08);
 }
 .app.ui.ui-dark {
   --sheet-bg: rgb(30, 33, 46);
   --overlay: rgba(4, 5, 10, 0.55);
   --menu-bg: rgba(24, 26, 36, 0.96);
+  --plate-a: rgba(52, 57, 76, 0.8);
+  --plate-b: rgba(22, 25, 38, 0.72);
+  --btn: rgba(20, 22, 32, 0.72);
+  --btn-hover: rgba(48, 52, 70, 0.92);
+  --btn-text: #c9ccd6;
+  --btn-text-hover: #fff;
 }
 .app.ui.ui-accent {
   --sheet-bg: color-mix(in srgb, var(--ui-accent) 48%, #000);
@@ -39,6 +74,20 @@
   --overlay: color-mix(in srgb, var(--ui-accent) 45%, rgba(0, 0, 0, 0.35));
   --menu-bg: color-mix(in srgb, color-mix(in srgb, var(--ui-accent) 35%, #14161e) 97%, transparent);
 }
+/* アクセント・好きな色は、板・ボタン・時計の色の作り方が同じ(選んだ色から作る) */
+.app.ui.ui-accent,
+.app.ui.ui-custom {
+  --plate-a: color-mix(in srgb, var(--ui-accent) 62%, rgba(255, 255, 255, 0.35));
+  --plate-b: color-mix(in srgb, var(--ui-accent) 48%, rgba(255, 255, 255, 0.12));
+  --btn: color-mix(in srgb, var(--ui-accent) 78%, transparent);
+  --btn-hover: var(--ui-accent);
+  --btn-text: #fff;
+  --btn-text-hover: #fff;
+  --clock: color-mix(in srgb, var(--ui-accent) 38%, #fff);
+  --clock-dim: color-mix(in srgb, var(--ui-accent) 50%, rgba(255, 255, 255, 0.55));
+}
+
+/* ---------- 明るい系(ホワイト・明るい好きな色)の、文字・線・ガラス・メニューの色 ---------- */
 .app.ui.ui-white,
 .app.ui.ui-custom.ui-light {
   --text: #1d2230;
@@ -61,115 +110,20 @@
 .app.ui.ui-white {
   --sheet-bg: rgb(252, 252, 254);
   --overlay: rgba(228, 231, 240, 0.68);
-}
-.app.ui.ui-custom.ui-light {
-  --sheet-bg: color-mix(in srgb, var(--ui-accent) 86%, #fff);
-  --overlay: color-mix(in srgb, var(--ui-accent) 55%, rgba(255, 255, 255, 0.5));
-}
-/* ホームのフォルダのタイル(板)の色も、UI の色に合わせる */
-.app.ui.ui-dark {
-  --plate-a: rgba(52, 57, 76, 0.8);
-  --plate-b: rgba(22, 25, 38, 0.72);
-}
-.app.ui.ui-accent,
-.app.ui.ui-custom {
-  --plate-a: color-mix(in srgb, var(--ui-accent) 62%, rgba(255, 255, 255, 0.35));
-  --plate-b: color-mix(in srgb, var(--ui-accent) 48%, rgba(255, 255, 255, 0.12));
-}
-.app.ui.ui-custom.ui-light {
-  --plate-a: color-mix(in srgb, var(--ui-accent) 70%, #fff);
-  --plate-b: color-mix(in srgb, var(--ui-accent) 58%, #fff);
-}
-
-/* ---------- ボタンの色(最小化・最大化・閉じる・1 2 3・右下の追加/リロード/設定・ページ送りの矢印)も、UI の色に合わせる ---------- */
-.app {
-  --btn: var(--glass);
-  --btn-hover: var(--glass-strong);
-  --btn-text: var(--text-dim);
-  --btn-text-hover: var(--text);
-}
-.app.ui.ui-dark {
-  --btn: rgba(20, 22, 32, 0.72);
-  --btn-hover: rgba(48, 52, 70, 0.92);
-  --btn-text: #c9ccd6;
-  --btn-text-hover: #fff;
-}
-.app.ui.ui-white {
   --btn: rgba(255, 255, 255, 0.82);
   --btn-hover: #fff;
   --btn-text: #4a5066;
   --btn-text-hover: #1d2230;
 }
-.app.ui.ui-accent,
-.app.ui.ui-custom {
-  --btn: color-mix(in srgb, var(--ui-accent) 78%, transparent);
-  --btn-hover: var(--ui-accent);
-  --btn-text: #fff;
-  --btn-text-hover: #fff;
-}
+/* 明るい「好きな色」だけ、上の暗い系の指定より 1 段強くして、上書きする */
 .app.ui.ui-custom.ui-light {
+  --sheet-bg: color-mix(in srgb, var(--ui-accent) 86%, #fff);
+  --overlay: color-mix(in srgb, var(--ui-accent) 55%, rgba(255, 255, 255, 0.5));
+  --plate-a: color-mix(in srgb, var(--ui-accent) 70%, #fff);
+  --plate-b: color-mix(in srgb, var(--ui-accent) 58%, #fff);
   --btn-text: #1d2230;
   --btn-text-hover: #000;
-}
-.app .titlebar button {
-  background: color-mix(in srgb, var(--btn) var(--ui-alpha, 100%), transparent);
-  color: var(--btn-text);
-  opacity: 0.9;
-}
-/* 閉じるボタンも、ほかのボタンと同じ色(赤にしない) */
-.app .titlebar button:hover,
-.app .titlebar button.close:hover {
-  background: var(--btn-hover);
-  color: var(--btn-text-hover);
-  opacity: 1;
-}
-.app .round {
-  background: color-mix(in srgb, var(--btn) var(--ui-alpha, 100%), transparent);
-  color: var(--btn-text);
-}
-.app .round:hover,
-.app .round.active {
-  background: var(--btn-hover);
-  color: var(--btn-text-hover);
-}
-.app .presets {
-  background: color-mix(in srgb, var(--btn) var(--ui-alpha, 100%), transparent);
-}
-.app .presets button {
-  color: var(--btn-text);
-}
-.app .presets button:hover,
-.app .presets button.on {
-  background: var(--btn-hover);
-  color: var(--btn-text-hover);
-}
-.app .edge {
-  background: color-mix(in srgb, var(--btn) var(--ui-alpha, 100%), transparent);
-  color: var(--btn-text);
-}
-.app .edge:hover {
-  background: var(--btn-hover);
-  color: var(--btn-text-hover);
-}
-
-/* ---------- 時計の色も、UI の色に合わせる ---------- */
-.app {
-  --clock: var(--text);
-  --clock-dim: var(--text-dim);
-}
-.app.ui.ui-accent,
-.app.ui.ui-custom {
-  --clock: color-mix(in srgb, var(--ui-accent) 38%, #fff);
-  --clock-dim: color-mix(in srgb, var(--ui-accent) 50%, rgba(255, 255, 255, 0.55));
-}
-.app.ui.ui-custom.ui-light {
   /* 明るい色は、そのまま時計の色にする(暗めの背景の上で見やすい) */
   --clock: var(--ui-accent);
   --clock-dim: color-mix(in srgb, var(--ui-accent) 72%, transparent);
-}
-.app .clock .time {
-  color: var(--clock);
-}
-.app .clock .date {
-  color: var(--clock-dim);
 }

@@ -1,0 +1,29 @@
+/* 時計のウィジェット(.clock)。色は UI の色(--clock 系。ui-colors.css)に従う */
+.clock {
+  text-align: center;
+}
+/* 幅(横のマスの数)と高さ(縦のマスの数)の、小さいほうに合わせて、中身の大きさを変える(1 マスの高さにも収まる) */
+.widget > .clock {
+  container-type: size;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.clock .time {
+  color: var(--clock);
+  font-size: clamp(12px, min(19cqw, 56cqh), 150px);
+  font-weight: 300;
+  letter-spacing: 1px;
+  line-height: 1;
+}
+.clock .date {
+  margin-top: clamp(1px, min(1.2cqw, 3cqh), 16px);
+  color: var(--clock-dim);
+  font-size: clamp(8px, min(4cqw, 17cqh), 30px);
+}
+/* 幅が狭いか、とても低いときは、日付を隠す */
+@container (max-width: 90px) or (max-height: 38px) {
+  .clock .date {
+    display: none;
+  }
+}

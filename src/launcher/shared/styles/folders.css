@@ -31,6 +31,10 @@
 .sheet {
   /* 枠の外側(上下左右)に余白を広めに取る。アイコンをここへドラッグして外に出すと、ホームへ移動する */
   --side: min(calc(100cqw - clamp(64px, 14vw, 160px)), calc(100cqh - clamp(64px, 14vh, 160px)));
+  /* ▷ ◁ は、見つけやすく押しやすいよう大きめにする。枠の左右に専用の余白(--gutter)を取り、
+     その中に置くので、枠からはみ出さず、アイコンにも重ならない */
+  --arrow: clamp(36px, 7vmin, 54px);
+  --gutter: calc(var(--arrow) + 12px);
   position: relative;
   width: var(--side);
   height: var(--side);
@@ -69,6 +73,22 @@
   flex: 1;
   min-height: 0;
   height: auto;
+}
+/* フォルダ内のページ送りの矢印(ホームの矢印は pager.css の `.edge`) */
+.sheet .edge {
+  width: var(--arrow);
+  height: var(--arrow);
+  margin-top: calc(var(--arrow) / -2);
+}
+.sheet .edge svg {
+  width: calc(var(--arrow) * 0.55);
+  height: calc(var(--arrow) * 0.55);
+}
+.sheet .edge-left {
+  left: calc(var(--gutter) * -1 + 6px);
+}
+.sheet .edge-right {
+  right: calc(var(--gutter) * -1 + 6px);
 }
 .empty {
   height: 200px;

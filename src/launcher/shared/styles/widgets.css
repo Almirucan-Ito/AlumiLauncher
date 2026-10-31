@@ -1,20 +1,17 @@
-/* ウィジェットの欄(ヘッダー・フッター)と追加画面 */
-/* ---------- ウィジェット(ヘッダー・フッター) ---------- */
-/* ヘッダー・フッターの並べ方(グリッド)は、widget-layers.css の `.wbar` */
+/* ウィジェットの欄(ヘッダー・フッター)・欄に置くウィジェットの枠・追加の画面 */
+/* ---------- ウィジェットの欄: ヘッダー・フッターは、横 7 マス(中心は 4)。マスの横幅は --wcol(欄の幅から決まり、広いウィンドウでは上限まで広がる)、高さは --wcell(固定) ---------- */
+.wbar {
+  display: grid;
+  grid-template-columns: repeat(7, var(--wcol, var(--wcell, minmax(0, 1fr))));
+  /* 縦は、1 マス = --wcell。ウィジェットは、欄の高さ(縦のマスの数)のぶん、縦に連なる */
+  grid-auto-rows: var(--wcell, 40px);
+  gap: 4px;
+  align-items: start;
+  justify-content: center;
+}
 .wbar-header,
 .wbar-footer {
   padding: 6px var(--side-x);
-}
-.app.compact .wbar {
-  display: none;
-}
-.widget {
-  position: relative;
-}
-.widget.moving {
-  z-index: 50;
-  opacity: 0.75;
-  pointer-events: none;
 }
 .wbar.dragging {
   min-height: 56px;
@@ -26,7 +23,85 @@
   outline-color: var(--text-dim);
   background: var(--glass);
 }
-/* 移動(左上の ⋮⋮)と大きさ(右端・下端)を変えるつまみ。マウスを乗せたときだけ出す */
+/* 動かしている間だけ出す、マスの目印(番号つき。中心の 4 番目だけ線を濃くする) */
+.wcell {
+  align-self: stretch;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  border: 1px dashed color-mix(in srgb, var(--text) 22%, transparent);
+  background: color-mix(in srgb, var(--text) 4%, transparent);
+  color: var(--text-dim);
+  font-size: 11px;
+  pointer-events: none;
+}
+.wcell:nth-child(4) {
+  border-color: var(--text-dim);
+}
+/* いま離したら、ウィジェット全体が収まる場所を囲む枠 */
+.wdrop {
+  align-self: stretch;
+  border: 2px solid var(--text);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--text) 14%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--text) 14%, transparent);
+  pointer-events: none;
+  z-index: 40;
+}
+.wdrop.bad {
+  border-color: #e5484d;
+  background: color-mix(in srgb, #e5484d 18%, transparent);
+  box-shadow: none;
+}
+
+/* ---------- ウィジェットの枠(.widget) ---------- */
+/*
+ * ウィジェットの高さは、1・2・3 マス(1 マスは 44px。2 マスは 92px、3 マスは 140px)で決まる。
+ * 中身は、高さに合わせて切り替える(各ウィジェットの style.css の @container)。.widget が、その基準(幅と高さを測る入れ物)になる。
+ */
+.widget {
+  position: relative;
+  min-width: 0;
+  width: 100%;
+  max-width: none;
+  container-type: size;
+}
+.widget > .wcard,
+.widget > .wmod {
+  width: 100%;
+}
+.widget.moving {
+  z-index: 50;
+  opacity: 0.75;
+  pointer-events: none;
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+  border-radius: 12px;
+}
+/* 高さを決めたウィジェット(.hfixed)は、中身をその高さいっぱいに広げる(収まらないぶんは、中で動かして見る) */
+.widget.hfixed > .wcard,
+.widget.hfixed > .clock {
+  height: 100%;
+  overflow: hidden;
+}
+.widget.hfixed > .wcard {
+  display: flex;
+  flex-direction: column;
+}
+.widget.hfixed .wtodo-list {
+  flex: 1;
+  max-height: none;
+}
+/* 追加のウィジェット(.wmod)の高さは、JS が style 属性に px で書く。それより優先させるため、ここだけ !important */
+.widget.hfixed > .wmod {
+  height: 100% !important;
+  overflow: auto;
+}
+/* 音楽プレーヤーのウィジェット: 高さを広げたときは、中身を縦に均等に配る(崩れない) */
+.widget.hfixed .wmusic {
+  justify-content: space-between;
+}
+/* 移動(左上の ⋮⋮)つまみ。マウスを乗せたときだけ出す */
 .wgrip {
   position: absolute;
   top: -6px;
@@ -61,8 +136,14 @@
   border: 0;
   background: transparent;
 }
+/* ホームのアイコン・フォルダを、ウィジェットの上へドラッグしているとき: 落とせるウィジェットを枠で示す */
+[data-drop-hover="true"] {
+  outline: 2px dashed var(--text);
+  outline-offset: -3px;
+  background: color-mix(in srgb, var(--text) 10%, transparent);
+}
 
-/* ウィジェットの追加画面 */
+/* ---------- ウィジェットの追加画面 ---------- */
 .dialog.wpicker {
   width: min(420px, calc(100% - 32px));
 }
@@ -80,6 +161,12 @@
   padding: 8px 10px;
   border-radius: 12px;
   background: var(--field);
+}
+.wrow .small {
+  flex: none;
+}
+.wrow.draggable {
+  cursor: grab;
 }
 .winfo {
   flex: 1;
@@ -107,10 +194,40 @@
 .wpicker .hint {
   margin-top: 10px;
 }
-
-/* ホームのアイコン・フォルダを、ウィジェットの上へドラッグしているとき: 落とせるウィジェットを枠で示す */
-[data-drop-hover="true"] {
-  outline: 2px dashed var(--text);
-  outline-offset: -3px;
-  background: color-mix(in srgb, var(--text) 10%, transparent);
+/* 一覧の、データ・キャッシュの大きさと消去 */
+.wstore {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+.wstore .small {
+  padding: 1px 8px;
+  font-size: 11px;
+}
+/* 一覧から行を掴んで動かしている間は、一覧を透明にして、後ろ(ヘッダー・フッター・ホーム)が見えるようにする */
+.modal.picking {
+  background: transparent;
+}
+.modal.picking .dialog {
+  opacity: 0;
+}
+.pick-ghost {
+  position: fixed;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px 5px 6px;
+  border-radius: 12px;
+  background: var(--menu-bg);
+  border: 1px solid var(--stroke);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+  color: var(--text);
+  font-size: 13px;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
 }

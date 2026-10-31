@@ -3,7 +3,11 @@
 .app.compact .clock,
 .app.compact .presets,
 .app.compact .tile .label,
-.app.compact .dots {
+.app.compact .dots,
+.app.compact .wbar,
+.app.compact .band,
+.app.compact .edge,
+.app.compact .sheet h2 {
   display: none;
 }
 .app.compact .titlebar {
@@ -45,17 +49,11 @@
   width: 12px;
   height: 12px;
 }
-.app.compact .edge {
-  display: none;
-}
 .app.compact .sheet {
   width: calc(100cqw - 12px);
   height: calc(100cqh - 12px);
   padding: 4px 78px 4px 10px;
   border-radius: 14px;
-}
-.app.compact .sheet h2 {
-  display: none;
 }
 .app.compact .settings {
   max-height: calc(100% - 40px);

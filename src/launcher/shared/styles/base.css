@@ -1,5 +1,48 @@
-/* ウィンドウ本体(背景の透過・ヘッダーの有無) */
+/* 土台: リセット・ウィンドウ本体・タイトルバー・5 段の骨組み(トップ・ホーム・ボトム) */
+/* ---------- リセット ---------- */
+* {
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  user-select: none;
+}
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  overflow: hidden;
+}
+button:focus,
+button:focus-visible {
+  outline: none; /* キーボードを使ったあとに出る黒い丸(フォーカスの枠)を出さない */
+}
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+/* 動きを減らす設定の人には、アニメーションをほぼ止める(!important は、ここだけ。どの規則よりも優先させるため) */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* ---------- ウィンドウ本体 ---------- */
+/*
+ * 画面は、上から順に、次の 5 つの段に分かれる。
+ *   トップ(.band-top)   … プリセットと、ウィンドウのボタン(.titlebar)が並ぶ帯
+ *   ヘッダー(.wbar-header) … ウィジェットを並べる。ウィジェットの高さに合わせて、高さが決まる(無ければ出ない)
+ *   ホーム(.home)        … アイコン・フォルダ。ページ送りができる
+ *   フッター(.wbar-footer) … ウィジェットを並べる。ヘッダーと同じ
+ *   ボトム(.band-bottom) … ＋・再読み込み・設定のボタン(.corner)が並ぶ帯
+ * トップ・ボトムのボタンは、位置を決めて重ねて置き、この帯が、その分の高さを空ける。
+ */
 .app {
   position: relative;
   height: 100%;
@@ -8,6 +51,13 @@
   overflow: hidden;
   border-radius: 10px;
   isolation: isolate;
+  --top-h: 40px;
+  --bottom-h: 50px;
+  /* ヘッダー・ホーム・フッターの左右の余白(そろえる) */
+  --side-x: clamp(14px, 4vw, 30px);
+}
+.app.maxed {
+  border-radius: 0;
 }
 /* 背景だけを透過させる(文字やアイコンは透けない) */
 .app::before {
@@ -20,6 +70,7 @@
   pointer-events: none;
 }
 
+/* ---------- タイトルバー(最小化・最大化・閉じる) ---------- */
 .titlebar {
   position: absolute;
   inset: 0 0 auto 0;
@@ -31,56 +82,27 @@
   padding: 0 12px;
   z-index: 5;
 }
+/* ボタンの色は UI の色(--btn 系。ui-colors.css)に従う。閉じるボタンも、ほかのボタンと同じ色(赤にしない) */
 .titlebar button {
   width: 28px;
   height: 28px;
   display: grid;
   place-items: center;
   border-radius: 50%;
-  opacity: 0.55;
+  background: color-mix(in srgb, var(--btn) var(--ui-alpha, 100%), transparent);
+  color: var(--btn-text);
+  opacity: 0.9;
   transition:
     opacity 0.15s,
     background 0.15s;
 }
 .titlebar button:hover {
+  background: var(--btn-hover);
+  color: var(--btn-text-hover);
   opacity: 1;
-  background: var(--glass-strong);
-}
-.titlebar button.close:hover {
-  background: #e5484d;
-  color: #fff;
 }
 
-.clock {
-  text-align: center;
-}
-.time {
-  font-size: clamp(38px, 11vmin, 150px);
-  font-weight: 300;
-  letter-spacing: 1px;
-  line-height: 1;
-}
-.date {
-  margin-top: clamp(6px, 1.2vmin, 16px);
-  font-size: clamp(12px, 2.6vmin, 30px);
-  color: var(--text-dim);
-}
-
-/*
- * 画面は、上から順に、次の 5 つの段に分かれる。
- *   トップ(.band-top)   … プリセットと、ウィンドウのボタン(.titlebar)が並ぶ帯
- *   ヘッダー(.wbar-header) … ウィジェットを並べる。ウィジェットの高さに合わせて、高さが決まる(無ければ出ない)
- *   ホーム(.home)        … アイコン・フォルダ。ページ送りができる
- *   フッター(.wbar-footer) … ウィジェットを並べる。ヘッダーと同じ
- *   ボトム(.band-bottom) … ＋・再読み込み・設定のボタン(.corner)が並ぶ帯
- * トップ・ボトムのボタンは、位置を決めて重ねて置き、この帯が、その分の高さを空ける。
- */
-.app {
-  --top-h: 40px;
-  --bottom-h: 50px;
-  /* ヘッダー・ホーム・フッターの左右の余白(そろえる) */
-  --side-x: clamp(14px, 4vw, 30px);
-}
+/* ---------- 段の骨組み ---------- */
 .band {
   flex: 0 0 auto;
   pointer-events: none;
@@ -90,9 +112,6 @@
 }
 .band-bottom {
   height: var(--bottom-h);
-}
-.app.compact .band {
-  display: none;
 }
 .home {
   position: relative;
