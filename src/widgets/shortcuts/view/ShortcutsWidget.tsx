@@ -11,13 +11,13 @@ import { isMiniShortcut } from "../../../launcher/shared/lib/PathUtil";
 import { IconImg } from "../../../launcher/shared/ui/IconImg";
 import { t } from "../i18n";
 import {
-  ICON_GAP,
   MAX_PER_ROW,
   SHORTCUTS_KEY,
   addShortcut,
   entryFromDrop,
   iconLayout,
   moveShortcut,
+  slotIndex,
   parseShortcuts,
   pruneShortcuts,
   removeShortcut,
@@ -257,10 +257,7 @@ export function ShortcutsWidget({ env }: { env: WidgetEnv }) {
   const indexAt = (x: number, y: number) => {
     const r = grid.current?.getBoundingClientRect();
     if (!r) return 0;
-    const step = layout.side + ICON_GAP;
-    const col = Math.min(MAX_PER_ROW - 1, Math.max(0, Math.floor((x - r.left) / step)));
-    const row = Math.min(layout.rows - 1, Math.max(0, Math.floor((y - r.top) / step)));
-    return Math.min(list.length - 1, row * MAX_PER_ROW + col);
+    return slotIndex(x, y, r, layout.side, layout.rows, list.length);
   };
 
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>, from: number) => {
