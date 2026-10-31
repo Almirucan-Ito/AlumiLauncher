@@ -1,5 +1,24 @@
 import { describe, expect, it } from "vitest";
-import { keyName, validHotkey } from "./SettingsModel";
+import { keyName, normalizeHex, validHotkey } from "./SettingsModel";
+
+describe("normalizeHex(キーボードで打った色のコード)", () => {
+  it("6 桁は、# があってもなくても、小文字の #rrggbb にそろえる", () => {
+    expect(normalizeHex("#3b82f6")).toBe("#3b82f6");
+    expect(normalizeHex("3B82F6")).toBe("#3b82f6");
+    expect(normalizeHex("#FFAA00")).toBe("#ffaa00");
+  });
+  it("3 桁は、6 桁に広げる", () => {
+    expect(normalizeHex("#f80")).toBe("#ff8800");
+    expect(normalizeHex("ABC")).toBe("#aabbcc");
+  });
+  it("前後の空白は、気にしない", () => {
+    expect(normalizeHex("  #3b82f6 ")).toBe("#3b82f6");
+  });
+  it("色として読めないものは null(桁の数・文字・空・色の名前)", () => {
+    for (const bad of ["", "#", "#12", "#1234", "#12345", "#1234567", "#gggggg", "red", "#12 456", "##123456"])
+      expect(normalizeHex(bad)).toBeNull();
+  });
+});
 
 describe("keyName", () => {
   it("修飾キー・英数字・F キー・記号を、ショートカットの名前にする", () => {

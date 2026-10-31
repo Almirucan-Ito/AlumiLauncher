@@ -1,5 +1,6 @@
 import { DIM_RANGE, MODAL_BLUR_RANGE, TRANSPARENCY_RANGE, type Settings, type Theme } from "../../shared/api/ApiModel";
 import { t } from "../../shared/i18n/i18n";
+import { ColorRow } from "./ColorRow";
 import { THEMES, UI_THEMES } from "./SettingsModel";
 import { SliderRow } from "./SliderRow";
 
@@ -44,15 +45,7 @@ export function BackgroundGroup({
       </div>
 
       {settings.theme === "custom" && (
-        <label className="row">
-          <span>{t("pickColor")}</span>
-          <input
-            type="color"
-            value={settings.customColor}
-            onChange={(e) => onChange({ ...settings, customColor: e.target.value })}
-          />
-          <code>{settings.customColor}</code>
-        </label>
+        <ColorRow value={settings.customColor} onChange={(customColor) => onChange({ ...settings, customColor })} />
       )}
 
       {settings.theme === "image" && (
@@ -104,15 +97,7 @@ export function UiThemeGroup({ settings, onChange }: { settings: Settings; onCha
         ))}
       </div>
       {settings.uiTheme === "custom" && (
-        <label className="row">
-          <span>{t("pickColor")}</span>
-          <input
-            type="color"
-            value={settings.uiColor}
-            onChange={(e) => onChange({ ...settings, uiColor: e.target.value })}
-          />
-          <code>{settings.uiColor}</code>
-        </label>
+        <ColorRow value={settings.uiColor} onChange={(uiColor) => onChange({ ...settings, uiColor })} />
       )}
       <SliderRow
         label={t("uiTransparency")}

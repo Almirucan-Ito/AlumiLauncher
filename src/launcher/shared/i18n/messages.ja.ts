@@ -68,6 +68,7 @@ export const ja = {
   themeCustom: "好きな色",
   themeImage: "画像",
   pickColor: "色",
+  colorCode: "色のコード(例: #3b82f6。キーボードで入力できます)",
   changeImage: "画像を変更…",
   imageDim: "画像の暗さ",
   imageFilter: "画像",

@@ -155,6 +155,22 @@
   background: none;
   cursor: pointer;
 }
+.row input.hex {
+  flex: none;
+  width: 84px;
+  padding: 4px 6px;
+  border-radius: 7px;
+  border: 1px solid var(--stroke);
+  background: var(--field);
+  color: inherit;
+  font: inherit;
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-size: 12.5px;
+  user-select: text;
+}
+.row input.hex.invalid {
+  border-color: #e5484d;
+}
 .row input[type="range"] {
   flex: 1;
   min-width: 0;

@@ -47,6 +47,19 @@ export function keyName(code: string): string | null {
     : null;
 }
 
+/**
+ * キーボードで打った色のコードを、設定に保存できる形(`#rrggbb`。小文字)にそろえる。
+ * `#` は、あってもなくてもよく、3 桁(`#abc` = `#aabbcc`)も使える。前後の空白と、大文字・小文字は気にしない。
+ * @param input 打った文字(例: `#3B82F6` / `3b82f6` / `f80`)
+ * @returns `#rrggbb`。色として読めないときは `null`
+ */
+export function normalizeHex(input: string): string | null {
+  const s = input.trim().replace(/^#/, "").toLowerCase();
+  if (/^[0-9a-f]{6}$/.test(s)) return `#${s}`;
+  if (/^[0-9a-f]{3}$/.test(s)) return `#${s[0]}${s[0]}${s[1]}${s[1]}${s[2]}${s[2]}`;
+  return null;
+}
+
 /** 修飾キーの名前の一覧。 */
 const MODIFIERS = ["Ctrl", "Alt", "Shift", "Win"];
 
