@@ -46,7 +46,7 @@ pub(crate) fn mini_web_volume_script(percent: u32) -> String {
     )
 }
 
-/// ミニアプリの上のバー(「‹ ホーム」)の高さ。styles.css の .mini-bar と同じ(論理ピクセル)
+/// ミニアプリの上のバー(「‹ ホーム」)の高さ。miniapps.css の .mini-bar と同じ(論理ピクセル)
 pub(crate) const MINI_BAR_HEIGHT: f64 = 40.0;
 
 /// Web ミニアプリのウィンドウの、左・右・下に残す余白(論理ピクセル)。ランチャーの端をドラッグして大きさを変えられるように
