@@ -252,6 +252,16 @@ export const filesApi = {
     await invoke("delete_item", { path });
   },
   /**
+   * 登録済みフォルダ内のファイルの名前を、同じフォルダの中で変える(元のファイルの名前が変わる。拡張子は、変えられない)。
+   * @param path ファイルのパス
+   * @param newName 新しい名前(拡張子を含む)
+   * @returns 変えたあとのパス。使えない名前・同名がある、などのときは、拒否される(理由は、`invalid_name` / `extension_changed` / `exists` など)
+   */
+  async renameItem(path: string, newName: string): Promise<string> {
+    if (!isTauri) return path.replace(/[^\\/]*$/, newName);
+    return invoke<string>("rename_item", { path, newName });
+  },
+  /**
    * 「プログラムから開く」(アプリを選ぶ画面)を出す。
    * @param path 開くファイルのパス
    */

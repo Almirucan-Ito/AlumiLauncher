@@ -1,5 +1,5 @@
 import { type OpenFolder } from "./modules/folders/FolderModel";
-import { RenameDialog } from "./modules/folders/RenameDialog";
+import { FolderDialogs } from "./modules/folders/FolderDialogs";
 import { useFolderActions } from "./modules/folders/useFolderActions";
 import { type HomeEntry } from "./modules/home/HomeModel";
 import { HomeScreen } from "./modules/home/HomeScreen";
@@ -31,7 +31,6 @@ import { appClassName, layoutsOf } from "./modules/shell/AppLookModel";
 import { ConsentDialog } from "./modules/shell/ConsentDialog";
 import { ContextMenu } from "./modules/shell/ContextMenu";
 import { CornerButtons } from "./modules/shell/CornerButtons";
-import { DeleteDialog } from "./modules/shell/DeleteDialog";
 import { Pickers } from "./modules/shell/Pickers";
 import { PresetSwitcher } from "./modules/shell/PresetSwitcher";
 import { TitleBar } from "./modules/shell/TitleBar";
@@ -67,6 +66,7 @@ export function App() {
   // ---- 画面の状態(何を開いているか) ----
   const [open, setOpen] = useState<OpenFolder | null>(null);
   const [renaming, setRenaming] = useState<FolderEntry | null>(null);
+  const [renamingItem, setRenamingItem] = useState<Item | null>(null);
   const [deleting, setDeleting] = useState<Item | null>(null);
   const [menu, setMenu] = useState<MenuState | null>(null);
   const [showSettings, setShowSettings] = useState(false);
@@ -98,11 +98,12 @@ export function App() {
     entriesRef,
     setOpen,
     setRenaming,
+    setRenamingItem,
     setDeleting,
     reload,
     history,
   });
-  const { bumpFolder, tickFor, addFolder, pickAndAddFolder, renameFolder, deleteItem, addPaths } = folderActions;
+  const { bumpFolder, tickFor, addFolder, pickAndAddFolder, addPaths } = folderActions;
 
   // ---- ミニアプリ(機能は modules/miniapps) ----
   const miniApps = useMiniApps({ configRef, mutate, flash, launcherRef, setLauncherPath, bumpFolder, entriesRef });
@@ -194,7 +195,7 @@ export function App() {
   useAppKeys({
     on: {
       folderOpen: !!open,
-      renaming: !!renaming,
+      renaming: !!renaming || !!renamingItem,
       deleting: !!deleting,
       miniOpen: !!miniOpen,
       picking: pickers.anyPicking,
@@ -321,6 +322,7 @@ export function App() {
         flash={flash}
         showMenu={showMenu}
         setRenaming={setRenaming}
+        setRenamingItem={setRenamingItem}
         setDeleting={setDeleting}
       />
 
@@ -379,15 +381,13 @@ export function App() {
         <MiniAppHost key={miniOpen.id} app={miniOpen} env={miniApps.miniEnv} onClose={() => setMiniOpen(null)} />
       )}
 
-      {renaming && (
-        <RenameDialog
-          folder={renaming}
-          onSave={(name) => renameFolder(renaming.id, name)}
-          onCancel={() => setRenaming(null)}
-        />
-      )}
-
-      {deleting && <DeleteDialog item={deleting} onCancel={() => setDeleting(null)} onConfirm={deleteItem} />}
+      <FolderDialogs
+        renaming={renaming}
+        renamingItem={renamingItem}
+        deleting={deleting}
+        actions={folderActions}
+        close={{ folder: () => setRenaming(null), item: () => setRenamingItem(null), del: () => setDeleting(null) }}
+      />
 
       {toast && <div className="toast">{toast}</div>}
 

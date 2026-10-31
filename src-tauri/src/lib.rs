@@ -111,6 +111,7 @@ pub fn run() {
             crate::window::tray::get_autostart,
             crate::window::tray::set_autostart,
             crate::files::operations::delete_item,
+            crate::files::operations::rename_item,
             crate::files::shell_ops::open_with,
             crate::files::shell_ops::show_properties,
             crate::window::visibility::hide_window,

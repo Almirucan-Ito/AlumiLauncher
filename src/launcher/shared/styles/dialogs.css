@@ -39,6 +39,28 @@
 .dialog input:focus {
   border-color: var(--text-dim);
 }
+.dialog input.invalid {
+  border-color: #e5484d;
+}
+/* ファイル名の変更: 名前の入力欄と、そのままの拡張子を、横に並べる */
+.rename-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.rename-row input {
+  flex: 1;
+  min-width: 0;
+}
+.rename-ext {
+  flex: none;
+  font-size: 14px;
+  color: var(--text-dim);
+}
+.rename-hint {
+  min-height: 1.4em;
+  margin-top: 8px;
+}
 .dialog-actions {
   display: flex;
   justify-content: flex-end;

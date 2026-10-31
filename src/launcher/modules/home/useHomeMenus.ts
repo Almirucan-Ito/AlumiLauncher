@@ -9,7 +9,8 @@ import { type useFolderActions } from "../folders/useFolderActions";
  * ホーム・フォルダ内・アイコンの、右クリックメニュー(項目の中身)を作る。
  * @param actions フォルダ・アイコンの操作(`useFolderActions`)
  * @param showMenu メニューを出す関数
- * @param setRenaming 名前の変更の画面を開く関数
+ * @param setRenaming フォルダの名前の変更の画面を開く関数
+ * @param setRenamingItem ファイルの名前の変更の画面を開く関数
  * @param setDeleting 削除の確認の画面を開く関数
  * @returns フォルダのタイル・開いているフォルダの背景・アイコン・ホームの背景の、右クリックの処理
  */
@@ -17,11 +18,13 @@ export function useHomeMenus({
   actions,
   showMenu,
   setRenaming,
+  setRenamingItem,
   setDeleting,
 }: {
   actions: ReturnType<typeof useFolderActions>;
   showMenu: (x: number, y: number, actions: MenuAction[]) => void;
   setRenaming: Dispatch<SetStateAction<FolderEntry | null>>;
+  setRenamingItem: Dispatch<SetStateAction<Item | null>>;
   setDeleting: Dispatch<SetStateAction<Item | null>>;
 }) {
   const { shellAction, createHomeFolder, createHomeFile } = actions;
@@ -55,10 +58,11 @@ export function useHomeMenus({
       ]),
     [showMenu, setRenaming],
   );
-  /** アイコンの右クリックメニュー(プログラムから開く・ファイルの場所を開く・プロパティ・削除)。 */
+  /** アイコンの右クリックメニュー(名前を変更・プログラムから開く・ファイルの場所を開く・プロパティ・削除)。 */
   const onItemMenu = useCallback(
     (item: Item, x: number, y: number) => {
       showMenu(x, y, [
+        { label: t("renameFolder"), run: () => setRenamingItem(item) },
         { label: t("openWith"), run: () => shellAction(() => api.openWith(item.path), "openWithFailed") },
         { label: t("revealItem"), run: () => api.reveal(item.path, true) },
         {
@@ -68,7 +72,7 @@ export function useHomeMenus({
         { label: t("deleteItem"), run: () => setDeleting(item), danger: true },
       ]);
     },
-    [showMenu, shellAction, setDeleting],
+    [showMenu, shellAction, setRenamingItem, setDeleting],
   );
   /** ホームの右クリックメニュー(新しいフォルダ / 新しいファイル)を出す。 */
   const onHomeMenu = (e: React.MouseEvent) => {

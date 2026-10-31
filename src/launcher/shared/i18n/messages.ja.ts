@@ -42,6 +42,17 @@ export const ja = {
   deleteAction: "削除",
   deleted: "「{name}」をごみ箱に移動しました",
   deleteFailed: "削除できませんでした: {err}",
+  renameFileTitle: "ファイル名を変更",
+  renameExtHint: "拡張子({ext})は、そのままです。元のファイルの名前が変わります",
+  renameEmpty: "名前を入力してください",
+  renameChars: '使えない文字が入っています(\\ / : * ? " < > |)',
+  renameEdge: "名前の前後に空白や、終わりに「.」は付けられません",
+  renameReserved: "Windows が使う名前なので、使えません(CON・NUL・COM1・LPT1 など)",
+  renameLong: "名前が長すぎます(拡張子を含めて 200 字まで)",
+  renameDot: "拡張子の無いファイルには、「.」を含む名前は付けられません",
+  renameExists: "同じ名前のファイルが、すでにあります",
+  renameFailed: "名前を変更できませんでした: {err}",
+  renamed: "「{name}」に名前を変更しました",
 
   // 設定
   sizeTitle: "ウィンドウサイズ(起動時)",
