@@ -10,6 +10,7 @@ import {
   parseShortcuts,
   removeShortcut,
   shortcutKey,
+  slotIndex,
   type ShortcutEntry,
 } from "./ShortcutsModel";
 
@@ -123,6 +124,31 @@ describe("moveShortcut", () => {
     expect(moveShortcut(l, 1, 1)).toBe(l);
     expect(moveShortcut(l, -1, 1)).toBe(l);
     expect(moveShortcut(l, 0, 3)).toBe(l);
+  });
+});
+
+describe("slotIndex: 落とす位置の番号", () => {
+  // 幅 400 の入れ物に、1 辺 44 のアイコンが 3 つ(44*3 + 4*2 = 140 → 左の余白 130)
+  const box = { left: 100, top: 0, width: 400 };
+  const at = (x: number, count = 3) => slotIndex(x, 20, box, 44, 1, count);
+  it("真ん中に寄っていても、アイコンの真上の番号になる(右から左へも動かせる)", () => {
+    expect(at(100 + 130 + 10)).toBe(0);
+    expect(at(100 + 130 + 48 + 10)).toBe(1);
+    expect(at(100 + 130 + 96 + 10)).toBe(2);
+  });
+  it("端の外は、いちばん近い端", () => {
+    expect(at(0)).toBe(0);
+    expect(at(10000)).toBe(2);
+  });
+  it("はみ出して左詰めのとき(余白 0)は、左端から数える", () => {
+    const wide = { left: 0, top: 0, width: 200 };
+    expect(slotIndex(48 * 4 + 5, 5, wide, 44, 1, 6)).toBe(4);
+  });
+  it("2 段のときは、行も見る", () => {
+    expect(slotIndex(5, 60, { left: 0, top: 0, width: 288 }, 44, 2, 8)).toBe(6);
+  });
+  it("1 つもないときは 0", () => {
+    expect(at(50, 0)).toBe(0);
   });
 });
 

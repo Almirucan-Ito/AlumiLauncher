@@ -100,6 +100,33 @@ export function iconLayout(w: number, h: number, cell: number): { rows: number; 
 }
 
 /**
+ * 画面の位置の下にある、アイコンの番号を求める(行・列から。一覧の外なら、いちばん近い端)。
+ * アイコンが少ないときは、並びが真ん中に寄るので、その寄せたぶん(左の余白)を引いてから列を数える。
+ * @param x 画面の x 座標
+ * @param y 画面の y 座標
+ * @param box アイコンを並べている入れ物(grid)の、画面での位置と幅(`left` / `top` / `width`)
+ * @param side アイコン 1 つの 1 辺(px)
+ * @param rows 段の数
+ * @param count 並んでいるアイコンの数
+ * @returns アイコンの番号(0 から。1 つもなければ 0)
+ */
+export function slotIndex(
+  x: number,
+  y: number,
+  box: { left: number; top: number; width: number },
+  side: number,
+  rows: number,
+  count: number,
+): number {
+  const step = side + ICON_GAP;
+  const cols = Math.min(MAX_PER_ROW, Math.max(1, count));
+  const offset = Math.max(0, (box.width - (cols * step - ICON_GAP)) / 2);
+  const col = Math.min(cols - 1, Math.max(0, Math.floor((x - box.left - offset) / step)));
+  const row = Math.min(rows - 1, Math.max(0, Math.floor((y - box.top) / step)));
+  return Math.max(0, Math.min(count - 1, row * MAX_PER_ROW + col));
+}
+
+/**
  * 項目を、一覧の最後に足す。すでに入っているもの・置ける数を超えるものは、足さない。
  * @param list いまの一覧
  * @param entry 足す項目
