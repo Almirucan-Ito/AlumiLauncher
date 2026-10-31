@@ -66,6 +66,7 @@ export const en: typeof ja = {
   themeCustom: "Custom color",
   themeImage: "Image",
   pickColor: "Color",
+  colorCode: "Color code (e.g. #3b82f6; you can type it)",
   changeImage: "Change image…",
   imageDim: "Image dimming",
   imageFilter: "Images",
