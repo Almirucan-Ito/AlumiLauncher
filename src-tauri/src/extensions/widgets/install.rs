@@ -15,7 +15,7 @@ pub struct Installed {
 pub(crate) const MAX_INSTALL_FILES: usize = 2000;
 
 /// 取り込むフォルダの合計の大きさの上限(バイト)。
-pub(crate) const MAX_INSTALL_BYTES: u64 = 50 * 1024 * 1024;
+pub(crate) const MAX_INSTALL_BYTES: u64 = 1024 * 1024 * 1024;
 
 /// 取り込むフォルダの深さの上限。
 pub(crate) const MAX_INSTALL_DEPTH: usize = 8;

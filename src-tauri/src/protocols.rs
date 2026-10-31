@@ -95,11 +95,12 @@ pub(crate) fn miniapp(
         };
     }
     match miniapps_dir(ctx.app_handle()) {
-        Some(root) => widgets::respond(
+        Some(root) => widgets::respond_range(
             &root,
             "miniapp.localhost",
             request.uri().path(),
             &network_allowed(&ctx),
+            request.headers().get("range").and_then(|v| v.to_str().ok()),
         ),
         None => not_found(),
     }

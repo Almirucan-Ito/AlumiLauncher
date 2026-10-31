@@ -189,6 +189,30 @@ fn respond_serves_inside_and_blocks_outside() {
 }
 
 #[test]
+fn respond_range_returns_a_part_with_206() {
+    let root = tmp("range");
+    let w = root.join("v");
+    fs::create_dir_all(&w).unwrap();
+    let data: Vec<u8> = (0..=255u8).collect();
+    fs::write(w.join("a.bin"), &data).unwrap();
+    let get =
+        |range: Option<&str>| respond_range(&root, "miniapp.localhost", "/v/a.bin", &[], range);
+    let r = get(Some("bytes=10-19"));
+    assert_eq!(r.status(), 206);
+    assert_eq!(r.headers().get("Content-Range").unwrap(), "bytes 10-19/256");
+    assert_eq!(r.body().as_slice(), &data[10..20]);
+    let r = get(Some("bytes=250-"));
+    assert_eq!(r.status(), 206);
+    assert_eq!(r.body().as_slice(), &data[250..]);
+    assert_eq!(get(Some("bytes=999-")).status(), 416);
+    let r = get(None);
+    assert_eq!(r.status(), 200);
+    assert_eq!(r.body().len(), 256);
+    assert_eq!(r.headers().get("Accept-Ranges").unwrap(), "bytes");
+    let _ = fs::remove_dir_all(&root);
+}
+
+#[test]
 fn network_needs_both_a_declaration_and_consent() {
     let root = tmp("network");
     let w = root.join("net");

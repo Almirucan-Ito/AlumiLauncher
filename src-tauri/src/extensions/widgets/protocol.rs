@@ -129,13 +129,28 @@ pub fn respond(
     uri_path: &str,
     allowed: &[String],
 ) -> tauri::http::Response<Vec<u8>> {
+    respond_range(root, host, uri_path, allowed, None)
+}
+
+/// `respond` と同じ。ただし `Range` ヘッダーがあれば、その一部分だけを 206 で返す(動画・音声のシークと、メモリの節約のため)。
+/// 1 回に返す量は `RANGE_CHUNK` までに絞る。`Range` が無いときは、これまでどおり、まるごと返す。
+///
+/// # 引数
+/// * `range` - `Range` ヘッダーの値(例: `bytes=0-`)。無ければ `None`
+pub fn respond_range(
+    root: &Path,
+    host: &str,
+    uri_path: &str,
+    allowed: &[String],
+    range: Option<&str>,
+) -> tauri::http::Response<Vec<u8>> {
     let rel_for_net = uri_path.trim_start_matches('/');
     let net = rel_for_net
         .split_once('/')
         .map(|(id, file)| valid_id(id) && network_ok(host, root, id, file, allowed))
         .unwrap_or(false);
     let policy = csp(host, net);
-    let build = |status: u16, ctype: &str, body: Vec<u8>| {
+    let builder = |status: u16, ctype: &str| {
         tauri::http::Response::builder()
             .status(status)
             .header("Content-Type", ctype)
@@ -143,8 +158,10 @@ pub fn respond(
             .header("Access-Control-Allow-Origin", "*")
             .header("X-Content-Type-Options", "nosniff")
             .header("Cache-Control", "no-cache")
-            .body(body)
-            .unwrap_or_default()
+            .header("Accept-Ranges", "bytes")
+    };
+    let build = |status: u16, ctype: &str, body: Vec<u8>| {
+        builder(status, ctype).body(body).unwrap_or_default()
     };
     let rel = uri_path.trim_start_matches('/');
     let Some((id, file)) = rel.split_once('/') else {
@@ -168,8 +185,45 @@ pub fn respond(
     {
         return build(404, "text/plain", Vec::new());
     }
-    match fs::read(&path) {
-        Ok(bytes) => build(200, mime(&path), bytes),
-        Err(_) => build(404, "text/plain", Vec::new()),
+    let Some((start, end)) = range.and_then(crate::extensions::music::parse_range) else {
+        return match fs::read(&path) {
+            Ok(bytes) => build(200, mime(&path), bytes),
+            Err(_) => build(404, "text/plain", Vec::new()),
+        };
+    };
+    read_part(&path, start, end)
+        .map(|(buf, from, to, len)| {
+            builder(206, mime(&path))
+                .header("Content-Range", format!("bytes {from}-{to}/{len}"))
+                .body(buf)
+                .unwrap_or_default()
+        })
+        .unwrap_or_else(|len| {
+            builder(416, "text/plain")
+                .header("Content-Range", format!("bytes */{len}"))
+                .body(Vec::new())
+                .unwrap_or_default()
+        })
+}
+
+/// ファイルの一部(`start` から `end` まで。`RANGE_CHUNK` を超えない)を読む。
+///
+/// # 戻り値
+/// 成功: (中身, 開始位置, 終了位置, ファイル全体の大きさ)。範囲が外・読めない: `Err(ファイル全体の大きさ)`
+fn read_part(path: &Path, start: u64, end: Option<u64>) -> Result<(Vec<u8>, u64, u64, u64), u64> {
+    use std::io::{Read, Seek, SeekFrom};
+    let mut f = fs::File::open(path).map_err(|_| 0u64)?;
+    let len = f.metadata().map_err(|_| 0u64)?.len();
+    if start >= len {
+        return Err(len);
     }
+    let end = end
+        .unwrap_or(len - 1)
+        .min(len - 1)
+        .min(start + RANGE_CHUNK - 1)
+        .max(start);
+    let mut buf = vec![0u8; (end - start + 1) as usize];
+    f.seek(SeekFrom::Start(start)).map_err(|_| len)?;
+    f.read_exact(&mut buf).map_err(|_| len)?;
+    Ok((buf, start, end, len))
 }
