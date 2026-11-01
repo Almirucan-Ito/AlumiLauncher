@@ -66,6 +66,9 @@ pub(crate) struct Settings {
     /// モーダルで個数を指定したときの1ページの表示数
     #[serde(rename = "modalIconCount")]
     pub(crate) modal_icon_count: u32,
+    /// Windows 起動時の自動起動(`--hidden`)のとき、トレイに隠れず、ウィンドウを出すか
+    #[serde(rename = "startupShowWindow")]
+    pub(crate) startup_show_window: bool,
     /// グローバルショートカット(Alt+Space+L)で開くか
     #[serde(rename = "hotkeyEnabled")]
     pub(crate) hotkey_enabled: bool,
@@ -161,6 +164,7 @@ impl Default for Settings {
             home_icon_count: 9,
             modal_layout_mode: "auto".into(),
             modal_icon_count: 9,
+            startup_show_window: false,
             hotkey_enabled: true,
             hotkey: DEFAULT_HOTKEY.into(),
             always_on_top: false,

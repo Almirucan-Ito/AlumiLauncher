@@ -112,6 +112,7 @@ export const en: typeof ja = {
     "Keeps the launcher at the very back and maximized. The close / minimize / maximize buttons disappear and launching an icon never minimizes it. Click it to use it (it stays at the back). Multiple displays are not supported. When turned on, the window goes behind your other windows.",
   startupTitle: "Startup",
   startupToggle: "Start automatically with Windows",
+  startupShowToggle: "Also open the window when started automatically",
   hotkeyToggle: "Open with a shortcut",
   hotkeyKeys: "Shortcut",
   hotkeyPress: "Press the keys (Esc to cancel)",
