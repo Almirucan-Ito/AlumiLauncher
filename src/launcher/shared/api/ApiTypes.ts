@@ -34,6 +34,8 @@ export interface Settings {
   /** フォルダを開いたモーダルの表示数 */
   modalLayoutMode: "auto" | "fixed";
   modalIconCount: number;
+  /** 「Windows 起動時に自動で起動する」をオンにしているか(読むだけ。変えるときは api.setAutostart を使う。入れ直しで登録が消えても、起動時に登録し直すために覚えておく) */
+  autostart: boolean;
   /** Windows 起動時の自動起動のとき、トレイに隠れず、ウィンドウを出すか */
   startupShowWindow: boolean;
   /** グローバルショートカットで開くか */
@@ -189,6 +191,7 @@ export const DEFAULT_SETTINGS: Settings = {
   homeIconCount: 9,
   modalLayoutMode: "auto",
   modalIconCount: 9,
+  autostart: false,
   startupShowWindow: false,
   hotkeyEnabled: true,
   hotkey: "Ctrl+Alt+L",

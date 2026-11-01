@@ -54,6 +54,8 @@ pub async fn save_config(app: AppHandle, mut config: Config) -> Result<(), Strin
         config.settings.preset = full.settings.preset;
         config.settings.presets_enabled = full.settings.presets_enabled;
         config.settings.preset_count = full.settings.preset_count;
+        // スタートアップの選択も、画面の古い値で上書きしない(set_autostart でだけ変える)
+        config.settings.autostart = full.settings.autostart;
         full.settings = config.settings.clone();
         // 見張るフォルダが変わらない保存(ウィジェットのデータ・設定の変更など)では、見張りを作り直さない
         let before: Vec<String> = view_of(&full).folders.into_iter().map(|f| f.path).collect();

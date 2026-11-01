@@ -23,6 +23,7 @@ use crate::window::hotkey::apply_hotkeys;
 use crate::window::hotkey::parse_hotkey;
 use crate::window::hotkey::DEFAULT_HOTKEY;
 use crate::window::hotkey::OLD_DEFAULT_HOTKEY;
+use crate::window::tray::remember_autostart;
 use crate::window::tray::show_label;
 use crate::window::tray::TrayAutostart;
 use crate::window::tray::TrayShow;
@@ -57,8 +58,9 @@ use tauri_plugin_autostart::ManagerExt;
 pub(crate) fn setup(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let handle = app.handle().clone();
     prepare_data(&handle);
-    let autostart_enabled = ensure_config_file(app, &handle);
+    ensure_config_file(app, &handle);
     load_config_into_state(&handle);
+    let autostart_enabled = sync_autostart(app, &handle);
     build_tray(app, &handle, autostart_enabled)?;
     place_main_window(app, &handle);
     register_hotkeys(&handle);
@@ -75,11 +77,7 @@ fn prepare_data(handle: &AppHandle) {
 }
 
 /// 初回起動なら、設定ファイルを作る(スタートアップ登録は、利用者が設定で選ぶまで行わない)。
-///
-/// # 戻り値
-/// Windows 起動時の自動起動が、いま有効か(トレイのチェックに使う)
-fn ensure_config_file(app: &tauri::App, handle: &AppHandle) -> bool {
-    let autolaunch = app.autolaunch();
+fn ensure_config_file(_app: &tauri::App, handle: &AppHandle) {
     if let Ok(p) = config_path(handle) {
         if !p.exists() {
             if let Ok(json) = serde_json::to_string_pretty(&default_config()) {
@@ -87,7 +85,37 @@ fn ensure_config_file(app: &tauri::App, handle: &AppHandle) -> bool {
             }
         }
     }
-    autolaunch.is_enabled().unwrap_or(false)
+}
+
+/// スタートアップ(Windows 起動時の自動起動)の登録を、利用者の選択(設定の `autostart`)に合わせる。
+/// 選択がオンなら、登録し直す(アプリを入れ直して登録が消えていても戻る。exe の場所が変わっていても、いまの場所になる)。
+/// 選択は無いのに登録がある(以前の版で登録した)ときは、その登録を、選択として覚える。
+///
+/// # 戻り値
+/// 自動起動が、いま有効か(トレイのチェックに使う)
+fn sync_autostart(app: &tauri::App, handle: &AppHandle) -> bool {
+    let al = app.autolaunch();
+    let registered = al.is_enabled().unwrap_or(false);
+    let (enable, adopt) = autostart_plan(read_config(handle).settings.autostart, registered);
+    if enable {
+        let _ = al.enable();
+    }
+    if adopt {
+        remember_autostart(handle, true);
+    }
+    al.is_enabled().unwrap_or(false)
+}
+
+/// 選択と登録の状態から、することを決める。
+///
+/// # 引数
+/// * `wanted` - 利用者がオンにしているか(設定)
+/// * `registered` - いま登録されているか(Windows)
+///
+/// # 戻り値
+/// (登録し直すか, 登録を選択として覚えるか)
+fn autostart_plan(wanted: bool, registered: bool) -> (bool, bool) {
+    (wanted, !wanted && registered)
 }
 
 /// 設定をメモリに読み込む(以降は画面からの保存で更新し、ディスクへは遅延して書く)。
@@ -177,6 +205,7 @@ fn build_tray(app: &tauri::App, handle: &AppHandle, autostart_enabled: bool) -> 
                 } else {
                     let _ = al.disable();
                 }
+                remember_autostart(app, al.is_enabled().unwrap_or(false));
             }
             _ => {}
         })
@@ -249,4 +278,20 @@ fn register_hotkeys(handle: &AppHandle) {
     *handle.state::<AppState>().hotkey.lock_ok() =
         parse_hotkey(&read_config(handle).settings.hotkey);
     apply_hotkeys(handle, read_config(handle).settings.hotkey_enabled);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::autostart_plan;
+
+    #[test]
+    fn autostart_follows_the_saved_choice() {
+        // オンの選択は、登録が消えていても、登録し直す
+        assert_eq!(autostart_plan(true, false), (true, false));
+        assert_eq!(autostart_plan(true, true), (true, false));
+        // 以前の版で登録したものは、選択として覚える
+        assert_eq!(autostart_plan(false, true), (false, true));
+        // どちらも無ければ、何もしない
+        assert_eq!(autostart_plan(false, false), (false, false));
+    }
 }
