@@ -200,7 +200,7 @@ fn build_tray(app: &tauri::App, handle: &AppHandle, autostart_enabled: bool) -> 
 }
 
 /// メインウィンドウの、初めの大きさ・位置・最前面・デスクトップモードを決め、出すタイミングを決める。
-/// スタートアップ起動(`--hidden`)のときは、隠したまま常駐する(デスクトップモードのときは、隠さない)。
+/// スタートアップ起動(`--hidden`)のときは、隠したまま常駐する(デスクトップモードのときと、`startup_show_window` がオンのときは、隠さない)。
 /// 画面からの用意の知らせが届かなくても、数秒後には出せるようにする(読み込みに失敗しても、ランチャーが開けなくならないように)。
 fn place_main_window(app: &tauri::App, handle: &AppHandle) {
     let Some(w) = app.get_webview_window("main") else {
@@ -223,8 +223,8 @@ fn place_main_window(app: &tauri::App, handle: &AppHandle) {
     if s.desktop_mode {
         apply_desktop_mode(handle, true);
     }
-    // スタートアップ起動(--hidden)のときは隠したまま常駐(デスクトップモードのときは、隠さない)
-    if std::env::args().any(|a| a == "--hidden") && !s.desktop_mode {
+    // スタートアップ起動(--hidden)のときは隠したまま常駐(デスクトップモードのときと、「起動時にウィンドウを出す」設定のときは、隠さない)
+    if std::env::args().any(|a| a == "--hidden") && !s.desktop_mode && !s.startup_show_window {
         #[cfg(windows)]
         set_low_memory(&w, true);
     } else {

@@ -251,6 +251,14 @@ export function SettingsPanel({
         <label className="check">
           <input
             type="checkbox"
+            checked={settings.startupShowWindow}
+            onChange={(e) => onChange({ ...settings, startupShowWindow: e.target.checked })}
+          />
+          <span>{t("startupShowToggle")}</span>
+        </label>
+        <label className="check">
+          <input
+            type="checkbox"
             checked={settings.hotkeyEnabled}
             onChange={(e) => onChange({ ...settings, hotkeyEnabled: e.target.checked })}
           />

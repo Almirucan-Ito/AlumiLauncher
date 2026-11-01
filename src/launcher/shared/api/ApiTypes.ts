@@ -34,6 +34,8 @@ export interface Settings {
   /** フォルダを開いたモーダルの表示数 */
   modalLayoutMode: "auto" | "fixed";
   modalIconCount: number;
+  /** Windows 起動時の自動起動のとき、トレイに隠れず、ウィンドウを出すか */
+  startupShowWindow: boolean;
   /** グローバルショートカットで開くか */
   hotkeyEnabled: boolean;
   /** ショートカットの組み合わせ(2〜3キー。先頭は Ctrl / Alt / Shift / Win。例: "Alt+Space+L" "Ctrl+Space") */
@@ -187,6 +189,7 @@ export const DEFAULT_SETTINGS: Settings = {
   homeIconCount: 9,
   modalLayoutMode: "auto",
   modalIconCount: 9,
+  startupShowWindow: false,
   hotkeyEnabled: true,
   hotkey: "Ctrl+Alt+L",
   alwaysOnTop: false,
